@@ -8,15 +8,6 @@
   },
   "kavling": [
     {
-      "kode": "A-0122",
-      "blok": "A",
-      "luas": "120",
-      "harga": "180000000",
-      "status": "tersedia",
-      "fasilitas": "Hook,Dekat Masjid",
-      "foto": ""
-    },
-    {
       "kode": "B-01",
       "luas": "90",
       "harga": "135000000",
