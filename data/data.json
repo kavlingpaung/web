@@ -45,5 +45,12 @@
     }
   ],
   "jalan": [],
-  "banner": []
+  "banner": [
+    {
+      "judul": "a",
+      "url": "www",
+      "deskripsi": "",
+      "urutan": "99"
+    }
+  ]
 }
