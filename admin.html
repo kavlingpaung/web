@@ -700,8 +700,7 @@ function fetchData(cb){
   fetch(apiUrl()+'?t='+Date.now(), {
     headers:{
       'Authorization':'token '+GH_TOKEN,
-      'Accept':'application/vnd.github.v3+json',
-      'Cache-Control':'no-cache'
+      'Accept':'application/vnd.github.v3+json'
     }
   })
   .then(function(r){
@@ -724,8 +723,7 @@ function saveData(content, msg, cb){
   fetch(apiUrl()+'?t='+Date.now(), {
     headers:{
       'Authorization':'token '+GH_TOKEN,
-      'Accept':'application/vnd.github.v3+json',
-      'Cache-Control':'no-cache'
+      'Accept':'application/vnd.github.v3+json'
     }
   })
   .then(function(r){
