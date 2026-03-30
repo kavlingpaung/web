@@ -29,5 +29,12 @@
       "url": "https://i.imgur.com/PG6qon3.jpeg"
     }
   ],
-  "banner": []
+  "banner": [
+    {
+      "judul": "Denah Tanah Kavlingan",
+      "url": "https://imgur.com/xedHstG.jpg",
+      "deskripsi": "",
+      "urutan": "99"
+    }
+  ]
 }
