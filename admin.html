@@ -965,8 +965,10 @@ function confDel(type,idx){
 }
 function closeConf(){document.getElementById('conf-ov').classList.remove('open');pendDel=null;}
 function execDel(){
-  closeConf();
+  // Baca pendDel DULU sebelum closeConf() mereset nilainya
+  if(!pendDel){ toast('❌ Tidak ada data yang dipilih','err'); return; }
   var t=pendDel.type, i=pendDel.idx;
+  closeConf(); // baru tutup confirm dialog
   var removed;
   if(t==='kv'){ removed=kvData.splice(i,1)[0]; }
   else if(t==='jl'){ removed=jlData.splice(i,1)[0]; }
@@ -976,11 +978,15 @@ function execDel(){
       if(t==='kv'){renderKvTb();renderDash();}
       else if(t==='jl'){renderJlTb();}
       else{renderBnTb();}
-      toast('Data dihapus','ok');
+      toast('Data dihapus ✅','ok');
     } else {
+      // Kembalikan data jika gagal
       if(t==='kv') kvData.splice(i,0,removed);
       else if(t==='jl') jlData.splice(i,0,removed);
       else bnData.splice(i,0,removed);
+      if(t==='kv') renderKvTb();
+      else if(t==='jl') renderJlTb();
+      else renderBnTb();
     }
   });
 }
