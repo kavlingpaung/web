@@ -6,7 +6,17 @@
     "alamat": "Ayik Betung Desa Kota Raya, Lahat",
     "mapsLink": "https://maps.app.goo.gl/N7rRn8JvVbfG8iMN9"
   },
-  "kavling": [],
+  "kavling": [
+    {
+      "kode": "B1",
+      "blok": "B-1",
+      "luas": "150",
+      "harga": "",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    }
+  ],
   "jalan": [
     {
       "judul": "Jalan Masuk Melalui Tebing Sage",
