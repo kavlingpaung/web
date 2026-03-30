@@ -7,11 +7,74 @@
     "mapsLink": "https://maps.app.goo.gl/N7rRn8JvVbfG8iMN9"
   },
   "kavling": [
-    {
+        {
       "kode": "B1",
       "blok": "B-1",
+      "luas": "217.5",
+      "harga": "32000000",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    },
+    {
+      "kode": "B2",
+      "blok": "B-2",
+      "luas": "217.5",
+      "harga": "32000000",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    },
+    {
+      "kode": "B3",
+      "blok": "B-3",
+      "luas": "162",
+      "harga": "24000000",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    },
+    {
+      "kode": "B4",
+      "blok": "B-4",
       "luas": "150",
-      "harga": "",
+      "harga": "22200000",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    },
+    {
+      "kode": "B5",
+      "blok": "B-5",
+      "luas": "150",
+      "harga": "22200000",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    },
+    {
+      "kode": "C1",
+      "blok": "C-1",
+      "luas": "298",
+      "harga": "35200000",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    },
+    {
+      "kode": "C2",
+      "blok": "C-2",
+      "luas": "195",
+      "harga": "23000000",
+      "status": "tersedia",
+      "fasilitas": "",
+      "foto": ""
+    },
+    {
+      "kode": "C3",
+      "blok": "C-3",
+      "luas": "210",
+      "harga": "24800000",
       "status": "tersedia",
       "fasilitas": "",
       "foto": ""
