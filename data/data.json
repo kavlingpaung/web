@@ -7,6 +7,12 @@
     "mapsLink": "https://maps.app.goo.gl/N7rRn8JvVbfG8iMN9"
   },
   "kavling": [],
-  "jalan": [],
+  "jalan": [
+    {
+      "judul": "Jalan Masuk Melalui Tebing Sage",
+      "deskripsi": "Jarak untuk kelokasi tanah kurang lebih 700 Meter",
+      "url": "https://i.imgur.com/HQFmfiK.jpeg"
+    }
+  ],
   "banner": []
 }
