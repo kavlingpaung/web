@@ -44,7 +44,13 @@
       "foto": ""
     }
   ],
-  "jalan": [],
+  "jalan": [
+    {
+      "judul": "ok",
+      "deskripsi": "",
+      "url": "ok"
+    }
+  ],
   "banner": [
     {
       "judul": "Denah Kavlingan",
