@@ -6,17 +6,7 @@
     "alamat": "Jl. Raya Perumahan No.1, Pekanbaru, Riau",
     "mapsLink": "https://maps.google.com/?q=-0.5071,101.4478"
   },
-  "kavling": [
-    {
-      "kode": "B-01",
-      "luas": "90",
-      "harga": "135000000",
-      "status": "tersedia",
-      "blok": "B",
-      "fasilitas": "Dekat Gerbang",
-      "foto": ""
-    }
-  ],
+  "kavling": [],
   "jalan": [],
   "banner": [
     {
