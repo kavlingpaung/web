@@ -615,7 +615,7 @@ function showMod(kode){
   var mi=document.getElementById('m-img');
   mi.innerHTML=k.foto?'<img src="'+k.foto+'" alt="'+k.kode+'" onerror="this.parentElement.innerHTML=\'<span style=font-size:3rem;opacity:.4>🏡</span>\'">':'<span style="font-size:3rem;opacity:.4">🏡</span>';
   var tags=k.fasilitas&&k.fasilitas.trim()?'<div class="m-tags">'+k.fasilitas.split(',').map(function(f){return'<span class="kv-tag">'+f.trim()+'</span>';}).join('')+'</div>':'';
-  var hPerM=(h&&!isNaN(Number(k.harga))&&Number(k.harga)>0&&Number(k.luas)>0)?'<div class="m-row"><span class="lbl">Harga/m²</span><span class="val">Rp '+Math.round(Number(k.harga)/Number(k.luas)).toLocaleString('id-ID')+'/m²</span></div>':'';
+  var hPerM='';
   document.getElementById('m-body').innerHTML=
     '<div class="m-row"><span class="lbl">Kode</span><span class="val">'+k.kode+'</span></div>'+
     '<div class="m-row"><span class="lbl">Blok</span><span class="val">Blok '+k.blok+'</span></div>'+
