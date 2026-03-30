@@ -1,74 +1,17 @@
 {
   "config": {
-    "siteName": "Kavling Paung",
-    "tagline": "Miliki Tanah Untuk Investasi Masa Depan",
-    "whatsapp": "6282372917711",
-    "alamat": "Desa Kota Raya Lahat",
+    "siteName": "Kavling Prima Sejahtera",
+    "tagline": "Miliki tanah impian di lokasi premium.",
+    "whatsapp": "628123456789",
+    "alamat": "Jl. Raya Perumahan No.1, Pekanbaru, Riau",
     "mapsLink": "https://maps.google.com/?q=-0.5071,101.4478"
   },
   "kavling": [
-    {
-      "kode": "A-01",
-      "luas": "120",
-      "harga": "180000000",
-      "status": "tersedia",
-      "blok": "A",
-      "fasilitas": "Hook,Dekat Masjid",
-      "foto": ""
-    },
-    {
-      "kode": "A-02",
-      "luas": "100",
-      "harga": "150000000",
-      "status": "tersedia",
-      "blok": "A",
-      "fasilitas": "View Taman",
-      "foto": ""
-    },
-    {
-      "kode": "B-01",
-      "luas": "90",
-      "harga": "135000000",
-      "status": "tersedia",
-      "blok": "B",
-      "fasilitas": "Dekat Gerbang",
-      "foto": ""
-    },
-    {
-      "kode": "B-02",
-      "luas": "150",
-      "harga": "220000000",
-      "status": "tersedia",
-      "blok": "B",
-      "fasilitas": "Hook",
-      "foto": ""
-    }
+    {"kode":"A-01","luas":"120","harga":"180000000","status":"tersedia","blok":"A","fasilitas":"Hook,Dekat Masjid","foto":""},
+    {"kode":"A-02","luas":"100","harga":"150000000","status":"tersedia","blok":"A","fasilitas":"View Taman","foto":""},
+    {"kode":"B-01","luas":"90","harga":"135000000","status":"tersedia","blok":"B","fasilitas":"Dekat Gerbang","foto":""},
+    {"kode":"B-02","luas":"150","harga":"220000000","status":"tersedia","blok":"B","fasilitas":"Hook","foto":""}
   ],
-  "jalan": [
-    {
-      "judul": "ok",
-      "deskripsi": "",
-      "url": "ok"
-    }
-  ],
-  "banner": [
-    {
-      "judul": "Denah Kavlingan",
-      "url": "https://i.imgur.com/xedHstG.png",
-      "deskripsi": "",
-      "urutan": "1"
-    },
-    {
-      "judul": "Tampak Depan Tanah Kavlingan",
-      "url": "https://i.imgur.com/AKIz0t6.jpeg",
-      "deskripsi": "",
-      "urutan": "2"
-    },
-    {
-      "judul": "Tamapak Belakang Tanah Kavlingan",
-      "url": "https://i.imgur.com/1gvDrTX.jpeg",
-      "deskripsi": "",
-      "urutan": "3"
-    }
-  ]
+  "jalan": [],
+  "banner": []
 }
