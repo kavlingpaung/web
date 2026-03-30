@@ -40,10 +40,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .field input:focus{border-color:var(--acc)}
 .btn-login{width:100%;background:var(--acc);color:white;border:none;border-radius:8px;padding:.82rem;font-size:.92rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s,transform .15s;margin-top:.4rem}
 .btn-login:hover{background:var(--acc2);transform:translateY(-1px)}
-.l-err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:7px;padding:.65rem 1rem;font-size:.83rem;margin-top:.9rem;display:none}
+.l-err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:7px;padding:.65rem 1rem;font-size:.83rem;margin-top:.9rem;display:none;line-height:1.5}
 .l-err.show{display:block}
 .l-cfg-link{text-align:center;margin-top:1rem;font-size:.78rem;color:var(--ts)}
 .l-cfg-link a{color:var(--acc);cursor:pointer;text-decoration:underline}
+.sec-badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80;border-radius:5px;padding:.18rem .55rem;font-size:.72rem;font-weight:600;margin-left:.5rem}
 
 /* ── APP ── */
 #app{display:none;min-height:100vh}
@@ -209,6 +210,9 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
     <div class="field"><label>Password</label><input type="password" id="ip" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="btn-login" onclick="doLogin()">Masuk →</button>
     <div class="l-err" id="l-err">Password salah.</div>
+    <div style="margin-top:.9rem;background:rgba(79,110,247,.07);border:1px solid rgba(79,110,247,.15);border-radius:7px;padding:.65rem .9rem;font-size:.76rem;color:var(--ts);line-height:1.6">
+      🛡️ <strong style="color:var(--txt)">Perlindungan aktif:</strong> Kunci otomatis setelah 5× salah · Logout otomatis 30 menit tidak aktif · Deteksi perangkat baru
+    </div>
     <div class="l-cfg-link"><a onclick="resetSetup()">⚙️ Ubah konfigurasi GitHub</a></div>
   </div>
 </div>
@@ -495,23 +499,182 @@ function resetSetup(){
   location.reload();
 }
 
+// ════════════════════════════════════════
+//  KEAMANAN: Brute-force + Auto Logout + Device Check
+// ════════════════════════════════════════
+
+var MAX_ATTEMPTS  = 5;       // maks percobaan salah
+var LOCKOUT_MS    = 15 * 60 * 1000;  // kunci 15 menit
+var AUTO_LOGOUT_MS = 30 * 60 * 1000; // auto logout 30 menit
+var autoLogoutTimer = null;
+var activityTimer   = null;
+
+// ── Brute-force helpers ──
+function getBfState(){
+  try{
+    var raw = localStorage.getItem('kav_bf');
+    return raw ? JSON.parse(raw) : {count:0, lockedUntil:0};
+  }catch(e){ return {count:0,lockedUntil:0}; }
+}
+function setBfState(obj){ localStorage.setItem('kav_bf', JSON.stringify(obj)); }
+function resetBf(){ localStorage.removeItem('kav_bf'); }
+
+function checkLockout(){
+  var s = getBfState();
+  var now = Date.now();
+  if(s.lockedUntil && now < s.lockedUntil){
+    var minsLeft = Math.ceil((s.lockedUntil - now) / 60000);
+    return 'Terlalu banyak percobaan salah. Coba lagi dalam ' + minsLeft + ' menit.';
+  }
+  if(s.lockedUntil && now >= s.lockedUntil){
+    // Masa kunci sudah lewat, reset
+    resetBf();
+  }
+  return null;
+}
+
+function recordFailedAttempt(){
+  var s = getBfState();
+  s.count = (s.count || 0) + 1;
+  if(s.count >= MAX_ATTEMPTS){
+    s.lockedUntil = Date.now() + LOCKOUT_MS;
+    s.count = 0;
+    setBfState(s);
+    return true; // terkunci
+  }
+  setBfState(s);
+  var remaining = MAX_ATTEMPTS - s.count;
+  return remaining; // sisa percobaan
+}
+
+// ── Device fingerprint (deteksi browser baru) ──
+function getDeviceKey(){
+  // Fingerprint sederhana dari browser
+  var fp = [
+    navigator.userAgent,
+    navigator.language,
+    screen.width + 'x' + screen.height,
+    new Date().getTimezoneOffset()
+  ].join('|');
+  // Hash sederhana
+  var hash = 0;
+  for(var i=0;i<fp.length;i++){
+    hash = ((hash<<5)-hash)+fp.charCodeAt(i);
+    hash |= 0;
+  }
+  return String(Math.abs(hash));
+}
+
+function checkDeviceWarning(){
+  var savedKey  = localStorage.getItem('kav_dev');
+  var currentKey = getDeviceKey();
+  if(!savedKey){
+    // Pertama kali — simpan fingerprint
+    localStorage.setItem('kav_dev', currentKey);
+    return false;
+  }
+  return savedKey !== currentKey;
+}
+
+function saveDeviceKey(){
+  localStorage.setItem('kav_dev', getDeviceKey());
+}
+
+// ── Auto logout ──
+function startAutoLogout(){
+  clearTimeout(autoLogoutTimer);
+  autoLogoutTimer = setTimeout(function(){
+    doLogout();
+    alert('⏱️ Sesi berakhir karena tidak aktif selama 30 menit. Silakan login kembali.');
+  }, AUTO_LOGOUT_MS);
+}
+
+function resetActivity(){
+  clearTimeout(autoLogoutTimer);
+  startAutoLogout();
+}
+
+function startActivityMonitor(){
+  ['click','keydown','mousemove','touchstart'].forEach(function(evt){
+    document.addEventListener(evt, resetActivity, {passive:true});
+  });
+  startAutoLogout();
+
+  // Countdown warning di topbar
+  clearInterval(activityTimer);
+  var warningShown = false;
+  activityTimer = setInterval(function(){
+    // tidak perlu tiap detik, hanya pantau jika perlu
+  }, 60000);
+}
+
+function stopActivityMonitor(){
+  clearTimeout(autoLogoutTimer);
+  clearInterval(activityTimer);
+  ['click','keydown','mousemove','touchstart'].forEach(function(evt){
+    document.removeEventListener(evt, resetActivity);
+  });
+}
+
 // ── LOGIN ──
 function doLogin(){
+  var lockMsg = checkLockout();
+  if(lockMsg){
+    var errEl = document.getElementById('l-err');
+    errEl.textContent = '🔒 ' + lockMsg;
+    errEl.classList.add('show');
+    return;
+  }
+
   var p = document.getElementById('ip').value;
+
+  // Periksa perangkat baru
+  var isNewDevice = checkDeviceWarning();
+
   if(p === ADMIN_PASS){
+    resetBf();
+
+    if(isNewDevice){
+      var ok = confirm('⚠️ PERINGATAN KEAMANAN\n\nAdmin panel dibuka dari browser/perangkat yang berbeda dari biasanya.\n\nJika ini Anda sendiri, klik OK untuk lanjut.\nJika bukan Anda, klik Batal dan segera ganti password!');
+      if(!ok){ document.getElementById('ip').value=''; return; }
+      saveDeviceKey(); // Perbarui fingerprint
+    }
+
     show('app');
+    startActivityMonitor();
     loadAll();
     loadCfgForm();
     showPubUrl();
+    showSessionBadge();
   } else {
-    document.getElementById('l-err').classList.add('show');
+    var result = recordFailedAttempt();
+    var errEl = document.getElementById('l-err');
+    if(result === true){
+      errEl.textContent = '🔒 Terlalu banyak percobaan. Admin dikunci 15 menit.';
+    } else {
+      errEl.textContent = '❌ Password salah. Sisa percobaan: ' + result + 'x';
+    }
+    errEl.classList.add('show');
     document.getElementById('ip').value='';
   }
 }
 
+function showSessionBadge(){
+  // Tampilkan info sesi di topbar
+  var badge = document.querySelector('.u-badge');
+  if(badge){
+    var timeout = new Date(Date.now() + AUTO_LOGOUT_MS);
+    var h = timeout.getHours().toString().padStart(2,'0');
+    var m = timeout.getMinutes().toString().padStart(2,'0');
+    badge.title = 'Sesi aktif hingga ' + h + ':' + m + ' (otomatis logout jika tidak aktif 30 menit)';
+  }
+}
+
 function doLogout(){
+  stopActivityMonitor();
   show('login');
   document.getElementById('ip').value='';
+  document.getElementById('l-err').textContent = 'Password salah.';
   document.getElementById('l-err').classList.remove('show');
 }
 
@@ -537,58 +700,92 @@ function fetchData(cb){
   fetch(apiUrl()+'?t='+Date.now(), {
     headers:{
       'Authorization':'token '+GH_TOKEN,
-      'Accept':'application/vnd.github.v3+json'
+      'Accept':'application/vnd.github.v3+json',
+      'Cache-Control':'no-cache'
     }
   })
-  .then(function(r){ return r.json(); })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status+' — periksa token & nama repo');
+    return r.json();
+  })
   .then(function(d){
     bar(false);
+    if(!d.sha||!d.content){ throw new Error('Format data tidak valid'); }
     DATA_SHA = d.sha;
     var content = JSON.parse(atob(d.content.replace(/\n/g,'')));
     cb(content);
   })
-  .catch(function(e){ bar(false); toast('Gagal ambil data: '+e.message,'err'); });
+  .catch(function(e){ bar(false); toast('❌ Gagal ambil data: '+e.message,'err'); });
 }
 
+// saveData: selalu refresh SHA terbaru sebelum PUT agar tidak konflik SHA basi
 function saveData(content, msg, cb){
   bar(true);
-  var body = JSON.stringify({
-    message: msg || 'Update data via Admin Panel',
-    content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
-    sha: DATA_SHA
-  });
-  fetch(apiUrl(), {
-    method:'PUT',
+  fetch(apiUrl()+'?t='+Date.now(), {
     headers:{
       'Authorization':'token '+GH_TOKEN,
       'Accept':'application/vnd.github.v3+json',
-      'Content-Type':'application/json'
-    },
-    body: body
+      'Cache-Control':'no-cache'
+    }
+  })
+  .then(function(r){
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  })
+  .then(function(latest){
+    DATA_SHA = latest.sha;
+    var body = JSON.stringify({
+      message: msg || 'Update data via Admin Panel',
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
+      sha: DATA_SHA
+    });
+    return fetch(apiUrl(), {
+      method:'PUT',
+      headers:{
+        'Authorization':'token '+GH_TOKEN,
+        'Accept':'application/vnd.github.v3+json',
+        'Content-Type':'application/json'
+      },
+      body: body
+    });
   })
   .then(function(r){ return r.json(); })
   .then(function(d){
     bar(false);
-    if(d.content){ DATA_SHA = d.content.sha; if(cb) cb(true); }
-    else { toast('Gagal simpan: '+(d.message||'unknown'),'err'); if(cb) cb(false); }
+    if(d.content){
+      DATA_SHA = d.content.sha;
+      if(cb) cb(true);
+    } else {
+      toast('❌ Gagal simpan: '+(d.message||'unknown'),'err');
+      if(cb) cb(false);
+    }
   })
-  .catch(function(e){ bar(false); toast('Error: '+e.message,'err'); if(cb) cb(false); });
+  .catch(function(e){ bar(false); toast('❌ Error: '+e.message,'err'); if(cb) cb(false); });
 }
 
 function getFullData(cb){
   fetchData(function(d){
-    kvData = d.kavling||[];
-    jlData = d.jalan||[];
-    bnData = (d.banner||[]).sort(function(a,b){return(Number(a.urutan)||99)-(Number(b.urutan)||99);});
+    kvData  = d.kavling||[];
+    jlData  = d.jalan||[];
+    bnData  = (d.banner||[]).sort(function(a,b){return(Number(a.urutan)||99)-(Number(b.urutan)||99);});
     cfgData = d.config||{};
     cb(d);
   });
 }
 
-// ── LOAD ALL ──
+// ── LOAD ALL — loadCfgForm dipanggil sequential setelah loadAll selesai ──
 function loadAll(){
-  getFullData(function(){
+  getFullData(function(d){
     renderDash(); renderKvTb(); renderJlTb(); renderBnTb();
+    // Isi form config dari data yang sudah diambil (tidak fetch ulang)
+    cfgData = d.config||{};
+    document.getElementById('c-name').value = cfgData.siteName||'';
+    document.getElementById('c-tag').value  = cfgData.tagline||'';
+    document.getElementById('c-wa').value   = cfgData.whatsapp||'';
+    document.getElementById('c-alm').value  = cfgData.alamat||'';
+    document.getElementById('c-map').value  = cfgData.mapsLink||'';
+    var ci = document.getElementById('cfg-info');
+    if(ci) ci.textContent = 'User: '+GH_USER+' | Repo: '+GH_REPO;
   });
 }
 
@@ -790,18 +987,11 @@ function execDel(){
   });
 }
 
-// ── CONFIG FORM ──
+// ── CONFIG FORM — tidak fetch ulang, data sudah ada dari loadAll ──
 function loadCfgForm(){
-  var cfg = document.getElementById('cfg-info');
-  if(cfg) cfg.textContent = 'User: '+GH_USER+' | Repo: '+GH_REPO;
-  fetchData(function(d){
-    cfgData = d.config||{};
-    document.getElementById('c-name').value = cfgData.siteName||'';
-    document.getElementById('c-tag').value = cfgData.tagline||'';
-    document.getElementById('c-wa').value = cfgData.whatsapp||'';
-    document.getElementById('c-alm').value = cfgData.alamat||'';
-    document.getElementById('c-map').value = cfgData.mapsLink||'';
-  });
+  // Dipanggil hanya untuk update badge info; data sudah diisi oleh loadAll
+  var ci = document.getElementById('cfg-info');
+  if(ci) ci.textContent = 'User: '+GH_USER+' | Repo: '+GH_REPO;
 }
 function saveCfg(){
   cfgData={siteName:document.getElementById('c-name').value.trim(),tagline:document.getElementById('c-tag').value.trim(),whatsapp:document.getElementById('c-wa').value.trim(),alamat:document.getElementById('c-alm').value.trim(),mapsLink:document.getElementById('c-map').value.trim()};
