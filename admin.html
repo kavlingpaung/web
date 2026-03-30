@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel — Kavling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0F1117;--sur:#1A1D27;--sur2:#222636;--bdr:#2E3248;
+  --acc:#4F6EF7;--acc2:#6B85FF;--grn:#22C55E;--red:#EF4444;--ylw:#F59E0B;
+  --txt:#E8EAED;--ts:#9AA0B4;--tm:#5A6075;--r:10px;
+  --sh:0 4px 24px rgba(0,0,0,.4);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:15px}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh}
+
+/* ── SETUP SCREEN ── */
+#setup{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 60% 30%,#1a2240 0%,#0F1117 60%)}
+.setup-box{background:var(--sur);border:1px solid var(--bdr);border-radius:18px;padding:2.4rem 2.6rem;width:100%;max-width:480px;box-shadow:var(--sh);animation:popIn .4s ease both}
+.setup-box h2{font-size:1.1rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem}
+.setup-box .sub{font-size:.82rem;color:var(--ts);margin-bottom:1.6rem;line-height:1.6}
+.step-badge{background:rgba(79,110,247,.2);color:var(--acc);border:1px solid rgba(79,110,247,.3);border-radius:6px;padding:.2rem .55rem;font-size:.72rem;font-weight:700;letter-spacing:.05em;margin-left:.4rem}
+.info-box{background:rgba(79,110,247,.08);border:1px solid rgba(79,110,247,.2);border-radius:8px;padding:1rem 1.1rem;font-size:.8rem;color:var(--ts);line-height:1.7;margin-bottom:1.2rem}
+.info-box strong{color:var(--acc)}
+.info-box code{background:var(--sur2);border:1px solid var(--bdr);border-radius:4px;padding:.1rem .35rem;font-size:.78rem;color:var(--acc2)}
+
+/* ── LOGIN ── */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 60% 30%,#1a2240 0%,#0F1117 60%);display:none}
+.lbox{background:var(--sur);border:1px solid var(--bdr);border-radius:18px;padding:2.4rem 2.6rem;width:100%;max-width:390px;box-shadow:var(--sh);animation:popIn .4s ease both}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(12px)}to{opacity:1;transform:none}}
+.l-logo{font-size:1.2rem;font-weight:700;display:flex;align-items:center;gap:.55rem;margin-bottom:.35rem}
+.l-dot{width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc)}
+.l-sub{font-size:.83rem;color:var(--ts);margin-bottom:1.8rem}
+.field{margin-bottom:1.1rem}
+.field label{display:block;font-size:.76rem;font-weight:600;color:var(--ts);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.45rem}
+.field input{width:100%;background:var(--bg);border:1.5px solid var(--bdr);border-radius:7px;padding:.7rem .95rem;font-size:.92rem;color:var(--txt);font-family:inherit;transition:border .2s;outline:none}
+.field input:focus{border-color:var(--acc)}
+.btn-login{width:100%;background:var(--acc);color:white;border:none;border-radius:8px;padding:.82rem;font-size:.92rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s,transform .15s;margin-top:.4rem}
+.btn-login:hover{background:var(--acc2);transform:translateY(-1px)}
+.l-err{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fca5a5;border-radius:7px;padding:.65rem 1rem;font-size:.83rem;margin-top:.9rem;display:none}
+.l-err.show{display:block}
+.l-cfg-link{text-align:center;margin-top:1rem;font-size:.78rem;color:var(--ts)}
+.l-cfg-link a{color:var(--acc);cursor:pointer;text-decoration:underline}
+
+/* ── APP ── */
+#app{display:none;min-height:100vh}
+.sb{position:fixed;left:0;top:0;bottom:0;width:232px;background:var(--sur);border-right:1px solid var(--bdr);display:flex;flex-direction:column;z-index:100}
+.sb-logo{padding:1.3rem 1.3rem .9rem;font-size:1rem;font-weight:700;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:.55rem}
+.sb-dot{width:8px;height:8px;border-radius:50%;background:var(--acc);box-shadow:0 0 8px var(--acc)}
+.sb-nav{flex:1;padding:.9rem .7rem;display:flex;flex-direction:column;gap:.2rem}
+.si{display:flex;align-items:center;gap:.7rem;padding:.6rem .85rem;border-radius:8px;cursor:pointer;color:var(--ts);font-size:.86rem;font-weight:500;transition:all .2s;border:none;background:transparent;font-family:inherit;width:100%;text-align:left}
+.si:hover{background:var(--sur2);color:var(--txt)}
+.si.on{background:rgba(79,110,247,.15);color:var(--acc)}
+.si .ico{font-size:1rem;width:18px;text-align:center}
+.sb-ft{padding:.9rem .7rem;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:.5rem}
+.btn-out{width:100%;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#fca5a5;border-radius:7px;padding:.55rem;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:background .2s}
+.btn-out:hover{background:rgba(239,68,68,.2)}
+
+.main{margin-left:232px;min-height:100vh;padding:1.8rem 2.2rem}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.8rem;flex-wrap:wrap;gap:1rem}
+.pg-title{font-size:1.3rem;font-weight:700}
+.pg-sub{font-size:.82rem;color:var(--ts);margin-top:.15rem}
+.u-badge{display:flex;align-items:center;gap:.55rem;background:var(--sur);border:1px solid var(--bdr);border-radius:7px;padding:.45rem .85rem;font-size:.82rem;font-weight:500}
+.u-av{width:26px;height:26px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:white}
+
+.page{display:none}
+.page.on{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.stat-g{display:grid;grid-template-columns:repeat(4,1fr);gap:.9rem;margin-bottom:1.8rem}
+.sc{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:1.3rem 1.4rem}
+.sc .lbl{font-size:.75rem;color:var(--ts);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.4rem}
+.sc .num{font-size:1.9rem;font-weight:700;line-height:1}
+.sc .sub{font-size:.76rem;color:var(--tm);margin-top:.3rem}
+.sc.bl .num{color:var(--acc)}.sc.gn .num{color:var(--grn)}.sc.rd .num{color:var(--red)}.sc.yl .num{color:var(--ylw)}
+
+.card{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.c-hd{padding:1.1rem 1.4rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.c-hd h3{font-size:.92rem;font-weight:600}
+.c-act{display:flex;gap:.55rem;align-items:center;flex-wrap:wrap}
+.srch{background:var(--bg);border:1.5px solid var(--bdr);border-radius:7px;padding:.42rem .8rem;font-size:.82rem;color:var(--txt);font-family:inherit;outline:none;width:170px;transition:border .2s}
+.srch:focus{border-color:var(--acc)}
+
+.btn{padding:.48rem .95rem;border-radius:7px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:.35rem}
+.bp{background:var(--acc);color:white}.bp:hover{background:var(--acc2)}
+.bd{background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.2)}.bd:hover{background:rgba(239,68,68,.25)}
+.bs{background:var(--sur2);color:var(--txt);border:1px solid var(--bdr)}.bs:hover{border-color:var(--acc);color:var(--acc)}
+.bsm{padding:.32rem .65rem;font-size:.75rem}
+
+table{width:100%;border-collapse:collapse}
+thead tr{border-bottom:1px solid var(--bdr)}
+th{padding:.7rem 1.1rem;font-size:.73rem;font-weight:600;color:var(--ts);text-transform:uppercase;letter-spacing:.07em;text-align:left;white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--sur2)}
+td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
+.em-row td{text-align:center;padding:2.5rem;color:var(--tm)}
+
+.badge{padding:.2rem .6rem;border-radius:999px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.bt{background:rgba(34,197,94,.15);color:#4ade80}
+.bj{background:rgba(239,68,68,.15);color:#fca5a5}
+.bi{background:rgba(245,158,11,.15);color:#fcd34d}
+
+.thumb{width:42px;height:42px;border-radius:6px;object-fit:cover;background:var(--sur2);display:block}
+.no-img{width:42px;height:42px;border-radius:6px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+
+.mov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;pointer-events:none;transition:opacity .25s}
+.mov.open{opacity:1;pointer-events:all}
+.mbox{background:var(--sur);border:1px solid var(--bdr);border-radius:14px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;transform:scale(.95) translateY(8px);transition:transform .25s}
+.mov.open .mbox{transform:none}
+.m-hd{padding:1.2rem 1.4rem;border-bottom:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--sur);z-index:1}
+.m-hd h3{font-size:.95rem;font-weight:700}
+.mx{width:28px;height:28px;border-radius:6px;background:var(--sur2);border:none;color:var(--ts);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.mx:hover{background:var(--bdr);color:var(--txt)}
+.m-body{padding:1.4rem}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:.9rem}
+.frow.s1{grid-template-columns:1fr}
+.fg{display:flex;flex-direction:column;gap:.35rem}
+.fg label{font-size:.74rem;font-weight:600;color:var(--ts);text-transform:uppercase;letter-spacing:.06em}
+.fg input,.fg select,.fg textarea{background:var(--bg);border:1.5px solid var(--bdr);border-radius:7px;padding:.6rem .85rem;font-size:.85rem;color:var(--txt);font-family:inherit;outline:none;transition:border .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--acc)}
+.fg select option{background:var(--sur)}
+.fg textarea{resize:vertical;min-height:65px}
+.hint{font-size:.73rem;color:var(--tm);margin-top:.15rem}
+.prev-img{width:100%;height:130px;border-radius:7px;object-fit:cover;background:var(--sur2);border:1px solid var(--bdr);display:none;margin-top:.5rem}
+.prev-img.show{display:block}
+.m-ft{padding:1.1rem 1.4rem;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:.65rem;position:sticky;bottom:0;background:var(--sur)}
+
+.cfg-g{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem}
+.cfg-c{background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:1.4rem}
+.cfg-c h3{font-size:.88rem;font-weight:700;margin-bottom:1.1rem;display:flex;align-items:center;gap:.45rem}
+.fg+.fg{margin-top:.75rem}
+
+.toast{position:fixed;bottom:22px;right:22px;z-index:9999;background:var(--sur);border:1px solid var(--bdr);border-radius:9px;padding:.85rem 1.2rem;font-size:.85rem;font-weight:500;display:flex;align-items:center;gap:.55rem;box-shadow:var(--sh);transform:translateY(70px);transition:transform .3s;pointer-events:none}
+.toast.show{transform:none}
+.toast.ok{border-color:rgba(34,197,94,.3);color:#4ade80}
+.toast.err{border-color:rgba(239,68,68,.3);color:#fca5a5}
+
+.conf-ov{position:fixed;inset:0;z-index:998;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.conf-ov.open{opacity:1;pointer-events:all}
+.conf-box{background:var(--sur);border:1px solid var(--bdr);border-radius:13px;padding:1.8rem;max-width:330px;width:100%;text-align:center;transform:scale(.95);transition:transform .2s}
+.conf-ov.open .conf-box{transform:none}
+.conf-ico{font-size:2.2rem;margin-bottom:.9rem}
+.conf-box h3{font-size:.95rem;font-weight:700;margin-bottom:.4rem}
+.conf-box p{font-size:.83rem;color:var(--ts);margin-bottom:1.3rem}
+.conf-btns{display:flex;gap:.65rem;justify-content:center}
+
+#lbar{position:fixed;top:0;left:0;right:0;height:3px;background:var(--acc);z-index:9998;transform:scaleX(0);transform-origin:left;transition:transform .4s ease;border-radius:0 2px 2px 0}
+#lbar.go{transform:scaleX(.7)}
+#lbar.done{transform:scaleX(1);transition:transform .2s}
+
+@media(max-width:860px){
+  .sb{width:58px}
+  .sb-logo .name,.si span,.sb-ft .btn-out{display:none}
+  .main{margin-left:58px;padding:1.3rem}
+  .stat-g{grid-template-columns:1fr 1fr}
+  .cfg-g{grid-template-columns:1fr}
+  .frow{grid-template-columns:1fr}
+}
+@media(max-width:540px){.main{padding:.9rem}.stat-g{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div id="lbar"></div>
+
+<!-- SETUP SCREEN (muncul sekali saat pertama kali) -->
+<div id="setup">
+  <div class="setup-box">
+    <h2>⚙️ Setup Admin Panel <span class="step-badge">SEKALI SAJA</span></h2>
+    <p class="sub">Masukkan konfigurasi GitHub untuk mengaktifkan Admin Panel. Data ini disimpan di browser Anda (localStorage) dan tidak dibagikan ke siapapun.</p>
+    <div class="info-box">
+      📋 <strong>Cara mendapatkan GitHub Token:</strong><br>
+      1. Login ke <strong>github.com</strong> → klik foto profil → <strong>Settings</strong><br>
+      2. Scroll ke bawah → <strong>Developer settings</strong><br>
+      3. <strong>Personal access tokens</strong> → <strong>Tokens (classic)</strong><br>
+      4. <strong>Generate new token (classic)</strong><br>
+      5. Nama: <code>kavling-admin</code>, centang: <code>repo</code> → klik Generate<br>
+      6. Salin token yang muncul (hanya tampil sekali!)
+    </div>
+    <div class="field">
+      <label>GitHub Username</label>
+      <input type="text" id="s-user" placeholder="contoh: johndoe" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Nama Repository</label>
+      <input type="text" id="s-repo" placeholder="contoh: kavling-web" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>GitHub Personal Access Token</label>
+      <input type="password" id="s-token" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+    </div>
+    <div class="field">
+      <label>Password Admin (untuk Login)</label>
+      <input type="password" id="s-pass" placeholder="Buat password untuk login admin">
+    </div>
+    <button class="btn-login" onclick="doSetup()">Simpan & Lanjutkan →</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="lbox">
+    <div class="l-logo"><div class="l-dot"></div><span>Admin Panel Kavling</span></div>
+    <p class="l-sub">Masuk untuk mengelola data website</p>
+    <div class="field"><label>Password</label><input type="password" id="ip" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <button class="btn-login" onclick="doLogin()">Masuk →</button>
+    <div class="l-err" id="l-err">Password salah.</div>
+    <div class="l-cfg-link"><a onclick="resetSetup()">⚙️ Ubah konfigurasi GitHub</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <aside class="sb">
+    <div class="sb-logo"><div class="sb-dot"></div><span class="name">Kavling Admin</span></div>
+    <nav class="sb-nav">
+      <button class="si on" onclick="goPage('dash',this)"><span class="ico">📊</span><span>Dashboard</span></button>
+      <button class="si" onclick="goPage('kv',this)"><span class="ico">🏡</span><span>Data Kavling</span></button>
+      <button class="si" onclick="goPage('bn',this)"><span class="ico">🖼️</span><span>Banner/Site Plan</span></button>
+      <button class="si" onclick="goPage('jl',this)"><span class="ico">🛣️</span><span>Foto Jalan</span></button>
+      <button class="si" onclick="goPage('cfg',this)"><span class="ico">⚙️</span><span>Konfigurasi</span></button>
+    </nav>
+    <div class="sb-ft">
+      <button class="btn-out" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div><div class="pg-title" id="pg-t">Dashboard</div><div class="pg-sub" id="pg-s">Ringkasan data kavling</div></div>
+      <div class="u-badge"><div class="u-av">A</div><span>Admin</span></div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="page on" id="pg-dash">
+      <div class="stat-g">
+        <div class="sc bl"><div class="lbl">Total Kavling</div><div class="num" id="st-tot">—</div><div class="sub">Semua blok</div></div>
+        <div class="sc gn"><div class="lbl">Tersedia</div><div class="num" id="st-av">—</div><div class="sub">Siap dijual</div></div>
+        <div class="sc rd"><div class="lbl">Terjual</div><div class="num" id="st-so">—</div><div class="sub">Sudah terjual</div></div>
+        <div class="sc yl"><div class="lbl">Indent</div><div class="num" id="st-in">—</div><div class="sub">Dalam proses</div></div>
+      </div>
+      <div class="card">
+        <div class="c-hd"><h3>5 Kavling Terakhir</h3><button class="btn bp bsm" onclick="goPage('kv',document.querySelectorAll('.si')[1])">Lihat Semua →</button></div>
+        <table><thead><tr><th>Kode</th><th>Blok</th><th>Luas</th><th>Harga</th><th>Status</th></tr></thead>
+        <tbody id="dash-tb"><tr class="em-row"><td colspan="5">Memuat...</td></tr></tbody></table>
+      </div>
+      <div style="margin-top:1rem;background:var(--sur);border:1px solid var(--bdr);border-radius:var(--r);padding:1.1rem 1.4rem;font-size:.82rem;color:var(--ts)">
+        🌐 <strong style="color:var(--txt)">URL Website Publik:</strong> <span id="pub-url" style="color:var(--acc)">—</span>
+        <button class="btn bs bsm" onclick="copyUrl()" style="margin-left:.7rem">📋 Salin</button>
+      </div>
+    </div>
+
+    <!-- KAVLING -->
+    <div class="page" id="pg-kv">
+      <div class="card">
+        <div class="c-hd">
+          <h3>Data Kavling (<span id="kv-cnt">0</span>)</h3>
+          <div class="c-act">
+            <input class="srch" type="text" placeholder="🔍 Cari kode / blok..." oninput="filterKv(this.value)">
+            <button class="btn bp" onclick="openKvMod()">+ Tambah Kavling</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Foto</th><th>Kode</th><th>Blok</th><th>Luas</th><th>Harga</th><th>Status</th><th>Fasilitas</th><th>Aksi</th></tr></thead>
+          <tbody id="kv-tb"><tr class="em-row"><td colspan="8">Memuat...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- JALAN -->
+    <div class="page" id="pg-jl">
+      <div class="card">
+        <div class="c-hd">
+          <h3>Foto Jalan (<span id="jl-cnt">0</span>)</h3>
+          <div class="c-act"><button class="btn bp" onclick="openJlMod()">+ Tambah Foto</button></div>
+        </div>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Preview</th><th>Judul</th><th>Deskripsi</th><th>URL</th><th>Aksi</th></tr></thead>
+          <tbody id="jl-tb"><tr class="em-row"><td colspan="5">Memuat...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- BANNER / SITE PLAN -->
+    <div class="page" id="pg-bn">
+      <div class="card">
+        <div class="c-hd">
+          <h3>Banner / Site Plan (<span id="bn-cnt">0</span>)</h3>
+          <div class="c-act"><button class="btn bp" onclick="openBnMod()">+ Tambah Gambar</button></div>
+        </div>
+        <p style="padding:.75rem 1.4rem;font-size:.82rem;color:var(--ts);border-bottom:1px solid var(--bdr)">Upload gambar denah kawasan, site plan, atau banner. Isi kolom <strong>Urutan</strong> (1,2,3...) untuk mengatur urutan slider.</p>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Preview</th><th>Judul</th><th>Deskripsi</th><th>Urutan</th><th>Aksi</th></tr></thead>
+          <tbody id="bn-tb"><tr class="em-row"><td colspan="5">Memuat...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- KONFIGURASI -->
+    <div class="page" id="pg-cfg">
+      <div class="cfg-g">
+        <div class="cfg-c">
+          <h3>🌐 Info Website</h3>
+          <div class="fg"><label>Nama Usaha</label><input type="text" id="c-name" placeholder="Kavling Prima Sejahtera"></div>
+          <div class="fg"><label>Tagline</label><textarea id="c-tag" rows="2" placeholder="Miliki tanah impian..."></textarea></div>
+          <div class="fg"><label>Nomor WhatsApp</label><input type="text" id="c-wa" placeholder="628123456789"><span class="hint">Format: 62xxx tanpa + dan spasi</span></div>
+          <div class="fg"><label>Alamat</label><textarea id="c-alm" rows="2" placeholder="Jl. Raya ..."></textarea></div>
+          <div class="fg"><label>Link Google Maps</label><input type="text" id="c-map" placeholder="https://maps.google.com/?q=..."></div>
+          <button class="btn bp" style="margin-top:1.2rem;width:100%" onclick="saveCfg()">💾 Simpan Konfigurasi</button>
+        </div>
+        <div>
+          <div class="cfg-c" style="margin-bottom:1.3rem">
+            <h3>🔐 Ganti Password Admin</h3>
+            <div class="fg"><label>Password Baru</label><input type="password" id="c-pw1" placeholder="••••••••"></div>
+            <div class="fg"><label>Konfirmasi Password</label><input type="password" id="c-pw2" placeholder="••••••••"></div>
+            <button class="btn bp" style="margin-top:1.2rem;width:100%" onclick="saveCreds()">🔒 Update Password</button>
+          </div>
+          <div class="cfg-c">
+            <h3>🔧 Konfigurasi GitHub</h3>
+            <p style="font-size:.8rem;color:var(--ts);margin-bottom:.8rem">Token tersimpan di browser Anda:</p>
+            <div style="background:var(--bg);border:1px solid var(--bdr);border-radius:7px;padding:.75rem;font-size:.8rem;color:var(--ts)" id="cfg-info">Memuat...</div>
+            <button class="btn bd" style="margin-top:.75rem;width:100%" onclick="resetSetup()">⚙️ Ubah Konfigurasi GitHub</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL KAVLING -->
+<div class="mov" id="kv-mov" onclick="closeKvMod(event)">
+  <div class="mbox">
+    <div class="m-hd"><h3 id="kv-mt">Tambah Kavling</h3><button class="mx" onclick="closeKvModD()">✕</button></div>
+    <div class="m-body">
+      <input type="hidden" id="kv-ei">
+      <div class="frow">
+        <div class="fg"><label>Kode Kavling *</label><input type="text" id="kv-kode" placeholder="A-01"></div>
+        <div class="fg"><label>Blok *</label><input type="text" id="kv-blok" placeholder="A"></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Luas (m²) *</label><input type="number" id="kv-luas" placeholder="120"></div>
+        <div class="fg">
+          <label>Harga</label>
+          <input type="text" id="kv-harga" placeholder="180000000 atau Nego atau kosongkan">
+          <span class="hint">Angka → tampil Rp | Teks → apa adanya | Kosong → "Hubungi untuk harga"</span>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Status *</label>
+          <select id="kv-st"><option value="tersedia">✅ Tersedia</option><option value="indent">⏳ Indent</option><option value="terjual">❌ Terjual</option></select>
+        </div>
+        <div class="fg"><label>Fasilitas</label><input type="text" id="kv-fas" placeholder="Hook, Dekat Masjid"><span class="hint">Pisahkan dengan koma</span></div>
+      </div>
+      <div class="frow s1">
+        <div class="fg">
+          <label>URL Foto Kavling</label>
+          <input type="text" id="kv-foto" placeholder="https://i.imgur.com/xxx.jpg" oninput="prevImg('kv-foto','kv-pv')">
+          <span class="hint">Imgur: upload → salin URL langsung | Google Drive: https://lh3.googleusercontent.com/d/FILE_ID</span>
+          <img class="prev-img" id="kv-pv" src="" alt="Preview">
+        </div>
+      </div>
+    </div>
+    <div class="m-ft"><button class="btn bs" onclick="closeKvModD()">Batal</button><button class="btn bp" onclick="saveKv()">💾 Simpan</button></div>
+  </div>
+</div>
+
+<!-- MODAL JALAN -->
+<div class="mov" id="jl-mov" onclick="closeJlMod(event)">
+  <div class="mbox">
+    <div class="m-hd"><h3 id="jl-mt">Tambah Foto Jalan</h3><button class="mx" onclick="closeJlModD()">✕</button></div>
+    <div class="m-body">
+      <input type="hidden" id="jl-ei">
+      <div class="frow s1"><div class="fg"><label>Judul Foto *</label><input type="text" id="jl-jdl" placeholder="Gerbang Utama"></div></div>
+      <div class="frow s1"><div class="fg"><label>Deskripsi</label><input type="text" id="jl-dsc" placeholder="Pintu masuk utama kompleks"></div></div>
+      <div class="frow s1">
+        <div class="fg">
+          <label>URL Foto *</label>
+          <input type="text" id="jl-url" placeholder="https://i.imgur.com/xxx.jpg" oninput="prevImg('jl-url','jl-pv')">
+          <span class="hint">Upload ke imgur.com lalu salin URL gambar</span>
+          <img class="prev-img" id="jl-pv" src="" alt="Preview">
+        </div>
+      </div>
+    </div>
+    <div class="m-ft"><button class="btn bs" onclick="closeJlModD()">Batal</button><button class="btn bp" onclick="saveJl()">💾 Simpan</button></div>
+  </div>
+</div>
+
+<!-- MODAL BANNER -->
+<div class="mov" id="bn-mov" onclick="closeBnMod(event)">
+  <div class="mbox">
+    <div class="m-hd"><h3 id="bn-mt">Tambah Banner/Site Plan</h3><button class="mx" onclick="closeBnModD()">✕</button></div>
+    <div class="m-body">
+      <input type="hidden" id="bn-ei">
+      <div class="frow s1"><div class="fg"><label>Judul *</label><input type="text" id="bn-jdl" placeholder="Site Plan Blok A"></div></div>
+      <div class="frow s1"><div class="fg"><label>Deskripsi</label><input type="text" id="bn-dsc" placeholder="Keterangan singkat (opsional)"></div></div>
+      <div class="frow s1">
+        <div class="fg">
+          <label>URL Gambar *</label>
+          <input type="text" id="bn-url" placeholder="https://i.imgur.com/xxx.jpg" oninput="prevImg('bn-url','bn-pv')">
+          <span class="hint">Upload ke imgur.com lalu salin URL gambar langsung</span>
+          <img class="prev-img" id="bn-pv" src="" alt="Preview">
+        </div>
+      </div>
+      <div class="frow s1"><div class="fg">
+        <label>Urutan Tampil</label>
+        <input type="number" id="bn-ord" placeholder="1" min="1">
+        <span class="hint">Angka kecil tampil lebih dulu (1 = pertama)</span>
+      </div></div>
+    </div>
+    <div class="m-ft"><button class="btn bs" onclick="closeBnModD()">Batal</button><button class="btn bp" onclick="saveBn()">💾 Simpan</button></div>
+  </div>
+</div>
+
+<!-- CONFIRM -->
+<div class="conf-ov" id="conf-ov">
+  <div class="conf-box">
+    <div class="conf-ico">🗑️</div>
+    <h3 id="conf-t">Hapus Data?</h3>
+    <p>Tindakan ini tidak dapat dibatalkan.</p>
+    <div class="conf-btns">
+      <button class="btn bs" onclick="closeConf()">Batal</button>
+      <button class="btn bd" id="conf-ok">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  KONFIGURASI — disimpan di localStorage browser
+// ═══════════════════════════════════════════════
+var GH_USER, GH_REPO, GH_TOKEN, ADMIN_PASS;
+var DATA_PATH = 'data/data.json';
+var kvData=[], jlData=[], bnData=[], cfgData={};
+var DATA_SHA = null; // SHA file untuk update
+
+var pageMeta = {
+  dash:{t:'Dashboard',s:'Ringkasan data kavling'},
+  kv:{t:'Data Kavling',s:'Kelola daftar dan harga kavling'},
+  jl:{t:'Foto Jalan',s:'Kelola foto akses jalan'},
+  bn:{t:'Banner / Site Plan',s:'Kelola gambar denah dan banner'},
+  cfg:{t:'Konfigurasi',s:'Pengaturan website dan akun admin'}
+};
+
+// ── BOOT ──
+(function init(){
+  var cfg = loadLocalConfig();
+  if(!cfg){
+    show('setup'); return;
+  }
+  GH_USER = cfg.user; GH_REPO = cfg.repo; GH_TOKEN = cfg.token; ADMIN_PASS = cfg.pass;
+  show('login');
+})();
+
+function loadLocalConfig(){
+  try{
+    var raw = localStorage.getItem('kav_cfg');
+    if(!raw) return null;
+    return JSON.parse(raw);
+  }catch(e){ return null; }
+}
+
+function saveLocalConfig(obj){
+  localStorage.setItem('kav_cfg', JSON.stringify(obj));
+}
+
+function show(screen){
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('login').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  if(screen==='setup') document.getElementById('setup').style.display = 'flex';
+  if(screen==='login') document.getElementById('login').style.display = 'flex';
+  if(screen==='app') document.getElementById('app').style.display = 'block';
+}
+
+// ── SETUP ──
+function doSetup(){
+  var u = document.getElementById('s-user').value.trim();
+  var r = document.getElementById('s-repo').value.trim();
+  var t = document.getElementById('s-token').value.trim();
+  var p = document.getElementById('s-pass').value;
+  if(!u||!r||!t||!p){ alert('Semua field wajib diisi!'); return; }
+  saveLocalConfig({user:u, repo:r, token:t, pass:p});
+  GH_USER=u; GH_REPO=r; GH_TOKEN=t; ADMIN_PASS=p;
+  show('login');
+}
+
+function resetSetup(){
+  localStorage.removeItem('kav_cfg');
+  location.reload();
+}
+
+// ── LOGIN ──
+function doLogin(){
+  var p = document.getElementById('ip').value;
+  if(p === ADMIN_PASS){
+    show('app');
+    loadAll();
+    loadCfgForm();
+    showPubUrl();
+  } else {
+    document.getElementById('l-err').classList.add('show');
+    document.getElementById('ip').value='';
+  }
+}
+
+function doLogout(){
+  show('login');
+  document.getElementById('ip').value='';
+  document.getElementById('l-err').classList.remove('show');
+}
+
+// ── NAVIGATION ──
+function goPage(pg,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.si').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('pg-'+pg).classList.add('on');
+  if(btn) btn.classList.add('on');
+  document.getElementById('pg-t').textContent = pageMeta[pg].t;
+  document.getElementById('pg-s').textContent = pageMeta[pg].s;
+}
+
+// ════════════════════════════════════════
+//  GITHUB API — baca & tulis data.json
+// ════════════════════════════════════════
+function apiUrl(){
+  return 'https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+DATA_PATH;
+}
+
+function fetchData(cb){
+  bar(true);
+  fetch(apiUrl()+'?t='+Date.now(), {
+    headers:{
+      'Authorization':'token '+GH_TOKEN,
+      'Accept':'application/vnd.github.v3+json'
+    }
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    bar(false);
+    DATA_SHA = d.sha;
+    var content = JSON.parse(atob(d.content.replace(/\n/g,'')));
+    cb(content);
+  })
+  .catch(function(e){ bar(false); toast('Gagal ambil data: '+e.message,'err'); });
+}
+
+function saveData(content, msg, cb){
+  bar(true);
+  var body = JSON.stringify({
+    message: msg || 'Update data via Admin Panel',
+    content: btoa(unescape(encodeURIComponent(JSON.stringify(content, null, 2)))),
+    sha: DATA_SHA
+  });
+  fetch(apiUrl(), {
+    method:'PUT',
+    headers:{
+      'Authorization':'token '+GH_TOKEN,
+      'Accept':'application/vnd.github.v3+json',
+      'Content-Type':'application/json'
+    },
+    body: body
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(d){
+    bar(false);
+    if(d.content){ DATA_SHA = d.content.sha; if(cb) cb(true); }
+    else { toast('Gagal simpan: '+(d.message||'unknown'),'err'); if(cb) cb(false); }
+  })
+  .catch(function(e){ bar(false); toast('Error: '+e.message,'err'); if(cb) cb(false); });
+}
+
+function getFullData(cb){
+  fetchData(function(d){
+    kvData = d.kavling||[];
+    jlData = d.jalan||[];
+    bnData = (d.banner||[]).sort(function(a,b){return(Number(a.urutan)||99)-(Number(b.urutan)||99);});
+    cfgData = d.config||{};
+    cb(d);
+  });
+}
+
+// ── LOAD ALL ──
+function loadAll(){
+  getFullData(function(){
+    renderDash(); renderKvTb(); renderJlTb(); renderBnTb();
+  });
+}
+
+// ── DASHBOARD ──
+function renderDash(){
+  document.getElementById('st-tot').textContent = kvData.length;
+  document.getElementById('st-av').textContent = kvData.filter(function(k){return k.status==='tersedia';}).length;
+  document.getElementById('st-so').textContent = kvData.filter(function(k){return k.status==='terjual';}).length;
+  document.getElementById('st-in').textContent = kvData.filter(function(k){return k.status==='indent';}).length;
+  var last=[].concat(kvData).slice(-5).reverse();
+  document.getElementById('dash-tb').innerHTML = last.length?last.map(function(k){
+    return '<tr><td><strong>'+k.kode+'</strong></td><td>Blok '+k.blok+'</td><td>'+k.luas+' m²</td><td>'+rpFmt(k.harga)+'</td><td><span class="badge b'+stClass(k.status)+'">'+lblSt(k.status)+'</span></td></tr>';
+  }).join('') : '<tr class="em-row"><td colspan="5">Belum ada data</td></tr>';
+}
+
+function showPubUrl(){
+  var url = 'https://'+GH_USER+'.github.io/'+GH_REPO+'/';
+  document.getElementById('pub-url').textContent = url;
+}
+function copyUrl(){
+  var t = document.getElementById('pub-url').textContent;
+  navigator.clipboard.writeText(t).then(function(){toast('URL disalin! ✅','ok');});
+}
+
+// ── KAVLING TABLE ──
+function renderKvTb(data){
+  data = data||kvData;
+  document.getElementById('kv-cnt').textContent = data.length;
+  document.getElementById('kv-tb').innerHTML = data.length?data.map(function(k){
+    var ri = kvData.indexOf(k);
+    return '<tr>'
+      +'<td>'+(k.foto?'<img class="thumb" src="'+k.foto+'" alt="" onerror="this.style.display=\'none\'">':'<div class="no-img">🏡</div>')+'</td>'
+      +'<td><strong>'+k.kode+'</strong></td><td>Blok '+k.blok+'</td><td>'+k.luas+' m²</td>'
+      +'<td>'+rpFmt(k.harga)+'</td>'
+      +'<td><span class="badge b'+stClass(k.status)+'">'+lblSt(k.status)+'</span></td>'
+      +'<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;color:var(--ts)">'+(k.fasilitas||'—')+'</td>'
+      +'<td><div style="display:flex;gap:.35rem">'
+        +'<button class="btn bs bsm" onclick="editKv('+ri+')">✏️</button>'
+        +'<button class="btn bd bsm" onclick="confDel(\'kv\','+ri+')">🗑️</button>'
+      +'</div></td></tr>';
+  }).join('') : '<tr class="em-row"><td colspan="8">Belum ada data kavling</td></tr>';
+}
+function filterKv(q){
+  q=q.toLowerCase();
+  renderKvTb(kvData.filter(function(k){return k.kode.toLowerCase().includes(q)||k.blok.toLowerCase().includes(q);}));
+}
+
+// ── JALAN TABLE ──
+function renderJlTb(){
+  document.getElementById('jl-cnt').textContent = jlData.length;
+  document.getElementById('jl-tb').innerHTML = jlData.length?jlData.map(function(j,i){
+    return '<tr>'
+      +'<td>'+(j.url?'<img class="thumb" src="'+j.url+'" alt="" onerror="this.style.display=\'none\'">':'<div class="no-img">🛣️</div>')+'</td>'
+      +'<td><strong>'+j.judul+'</strong></td>'
+      +'<td style="color:var(--ts);font-size:.82rem">'+(j.deskripsi||'—')+'</td>'
+      +'<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.75rem;color:var(--tm)">'+(j.url||'—')+'</td>'
+      +'<td><div style="display:flex;gap:.35rem">'
+        +'<button class="btn bs bsm" onclick="editJl('+i+')">✏️</button>'
+        +'<button class="btn bd bsm" onclick="confDel(\'jl\','+i+')">🗑️</button>'
+      +'</div></td></tr>';
+  }).join('') : '<tr class="em-row"><td colspan="5">Belum ada foto jalan</td></tr>';
+}
+
+// ── BANNER TABLE ──
+function renderBnTb(){
+  document.getElementById('bn-cnt').textContent = bnData.length;
+  document.getElementById('bn-tb').innerHTML = bnData.length?bnData.map(function(b,i){
+    return '<tr>'
+      +'<td>'+(b.url?'<img class="thumb" src="'+b.url+'" alt="" onerror="this.style.display=\'none\'">':'<div class="no-img">🖼️</div>')+'</td>'
+      +'<td><strong>'+b.judul+'</strong></td>'
+      +'<td style="color:var(--ts);font-size:.82rem;max-width:200px">'+(b.deskripsi||'—')+'</td>'
+      +'<td style="text-align:center;font-weight:600">'+(b.urutan||'—')+'</td>'
+      +'<td><div style="display:flex;gap:.35rem">'
+        +'<button class="btn bs bsm" onclick="editBn('+i+')">✏️</button>'
+        +'<button class="btn bd bsm" onclick="confDel(\'bn\','+i+')">🗑️</button>'
+      +'</div></td></tr>';
+  }).join('') : '<tr class="em-row"><td colspan="5">Belum ada banner/site plan</td></tr>';
+}
+
+// ── SAVE HELPER ──
+function buildFullData(){
+  return {config:cfgData, kavling:kvData, jalan:jlData, banner:bnData};
+}
+
+// ── KAVLING MODAL ──
+function openKvMod(data,idx){
+  document.getElementById('kv-mt').textContent = data?'Edit Kavling':'Tambah Kavling';
+  document.getElementById('kv-ei').value = idx!==undefined?idx:'';
+  document.getElementById('kv-kode').value = data?data.kode:'';
+  document.getElementById('kv-blok').value = data?data.blok:'';
+  document.getElementById('kv-luas').value = data?data.luas:'';
+  document.getElementById('kv-harga').value = data?data.harga:'';
+  document.getElementById('kv-st').value = data?data.status:'tersedia';
+  document.getElementById('kv-fas').value = data?data.fasilitas:'';
+  document.getElementById('kv-foto').value = data?data.foto:'';
+  var pv=document.getElementById('kv-pv');
+  if(data&&data.foto){pv.src=data.foto;pv.classList.add('show');}else{pv.classList.remove('show');pv.src='';}
+  document.getElementById('kv-mov').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function editKv(i){openKvMod(kvData[i],i);}
+function closeKvMod(e){if(e.target===document.getElementById('kv-mov'))closeKvModD();}
+function closeKvModD(){document.getElementById('kv-mov').classList.remove('open');document.body.style.overflow='';}
+function saveKv(){
+  var row={kode:document.getElementById('kv-kode').value.trim().toUpperCase(),blok:document.getElementById('kv-blok').value.trim().toUpperCase(),luas:String(Number(document.getElementById('kv-luas').value)),harga:document.getElementById('kv-harga').value.trim(),status:document.getElementById('kv-st').value,fasilitas:document.getElementById('kv-fas').value.trim(),foto:document.getElementById('kv-foto').value.trim()};
+  if(!row.kode||!row.blok||!row.luas){toast('Kode, Blok, dan Luas wajib diisi!','err');return;}
+  var idx=document.getElementById('kv-ei').value;
+  var isEdit=idx!=='';
+  if(isEdit) kvData[Number(idx)]=row; else kvData.push(row);
+  saveData(buildFullData(), (isEdit?'Edit':'Tambah')+' kavling '+row.kode, function(ok){
+    if(ok){ closeKvModD(); renderKvTb(); renderDash(); toast('Kavling '+(isEdit?'diperbarui':'ditambahkan')+' ✅','ok'); }
+    else { if(isEdit) kvData[Number(idx)]=kvData[Number(idx)]; else kvData.pop(); }
+  });
+}
+
+// ── JALAN MODAL ──
+function openJlMod(data,idx){
+  document.getElementById('jl-mt').textContent = data?'Edit Foto Jalan':'Tambah Foto Jalan';
+  document.getElementById('jl-ei').value = idx!==undefined?idx:'';
+  document.getElementById('jl-jdl').value = data?data.judul:'';
+  document.getElementById('jl-dsc').value = data?data.deskripsi:'';
+  document.getElementById('jl-url').value = data?data.url:'';
+  var pv=document.getElementById('jl-pv');
+  if(data&&data.url){pv.src=data.url;pv.classList.add('show');}else{pv.classList.remove('show');pv.src='';}
+  document.getElementById('jl-mov').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function editJl(i){openJlMod(jlData[i],i);}
+function closeJlMod(e){if(e.target===document.getElementById('jl-mov'))closeJlModD();}
+function closeJlModD(){document.getElementById('jl-mov').classList.remove('open');document.body.style.overflow='';}
+function saveJl(){
+  var row={judul:document.getElementById('jl-jdl').value.trim(),deskripsi:document.getElementById('jl-dsc').value.trim(),url:document.getElementById('jl-url').value.trim()};
+  if(!row.judul||!row.url){toast('Judul dan URL wajib diisi!','err');return;}
+  var idx=document.getElementById('jl-ei').value;
+  var isEdit=idx!=='';
+  if(isEdit) jlData[Number(idx)]=row; else jlData.push(row);
+  saveData(buildFullData(),'Update foto jalan', function(ok){
+    if(ok){ closeJlModD(); renderJlTb(); toast('Foto '+(isEdit?'diperbarui':'ditambahkan')+' ✅','ok'); }
+    else { if(isEdit) jlData[Number(idx)]=jlData[Number(idx)]; else jlData.pop(); }
+  });
+}
+
+// ── BANNER MODAL ──
+function openBnMod(data,idx){
+  document.getElementById('bn-mt').textContent = data?'Edit Banner/Site Plan':'Tambah Banner/Site Plan';
+  document.getElementById('bn-ei').value = idx!==undefined?idx:'';
+  document.getElementById('bn-jdl').value = data?data.judul:'';
+  document.getElementById('bn-dsc').value = data?data.deskripsi:'';
+  document.getElementById('bn-url').value = data?data.url:'';
+  document.getElementById('bn-ord').value = data?data.urutan:'';
+  var pv=document.getElementById('bn-pv');
+  if(data&&data.url){pv.src=data.url;pv.classList.add('show');}else{pv.classList.remove('show');pv.src='';}
+  document.getElementById('bn-mov').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function editBn(i){openBnMod(bnData[i],i);}
+function closeBnMod(e){if(e.target===document.getElementById('bn-mov'))closeBnModD();}
+function closeBnModD(){document.getElementById('bn-mov').classList.remove('open');document.body.style.overflow='';}
+function saveBn(){
+  var row={judul:document.getElementById('bn-jdl').value.trim(),url:document.getElementById('bn-url').value.trim(),deskripsi:document.getElementById('bn-dsc').value.trim(),urutan:document.getElementById('bn-ord').value.trim()||'99'};
+  if(!row.judul||!row.url){toast('Judul dan URL gambar wajib diisi!','err');return;}
+  var idx=document.getElementById('bn-ei').value;
+  var isEdit=idx!=='';
+  if(isEdit) bnData[Number(idx)]=row; else bnData.push(row);
+  saveData(buildFullData(),'Update banner/site plan', function(ok){
+    if(ok){ closeBnModD(); renderBnTb(); toast('Banner '+(isEdit?'diperbarui':'ditambahkan')+' ✅','ok'); }
+    else { if(isEdit) bnData[Number(idx)]=bnData[Number(idx)]; else bnData.pop(); }
+  });
+}
+
+// ── DELETE ──
+var pendDel=null;
+function confDel(type,idx){
+  pendDel={type:type,idx:idx};
+  var lbl=type==='kv'?'Kavling '+(kvData[idx]&&kvData[idx].kode):type==='jl'?'Foto "'+(jlData[idx]&&jlData[idx].judul)+'"':'Banner "'+(bnData[idx]&&bnData[idx].judul)+'"';
+  document.getElementById('conf-t').textContent='Hapus '+lbl+'?';
+  document.getElementById('conf-ov').classList.add('open');
+  document.getElementById('conf-ok').onclick=execDel;
+}
+function closeConf(){document.getElementById('conf-ov').classList.remove('open');pendDel=null;}
+function execDel(){
+  closeConf();
+  var t=pendDel.type, i=pendDel.idx;
+  var removed;
+  if(t==='kv'){ removed=kvData.splice(i,1)[0]; }
+  else if(t==='jl'){ removed=jlData.splice(i,1)[0]; }
+  else { removed=bnData.splice(i,1)[0]; }
+  saveData(buildFullData(),'Hapus data', function(ok){
+    if(ok){
+      if(t==='kv'){renderKvTb();renderDash();}
+      else if(t==='jl'){renderJlTb();}
+      else{renderBnTb();}
+      toast('Data dihapus','ok');
+    } else {
+      if(t==='kv') kvData.splice(i,0,removed);
+      else if(t==='jl') jlData.splice(i,0,removed);
+      else bnData.splice(i,0,removed);
+    }
+  });
+}
+
+// ── CONFIG FORM ──
+function loadCfgForm(){
+  var cfg = document.getElementById('cfg-info');
+  if(cfg) cfg.textContent = 'User: '+GH_USER+' | Repo: '+GH_REPO;
+  fetchData(function(d){
+    cfgData = d.config||{};
+    document.getElementById('c-name').value = cfgData.siteName||'';
+    document.getElementById('c-tag').value = cfgData.tagline||'';
+    document.getElementById('c-wa').value = cfgData.whatsapp||'';
+    document.getElementById('c-alm').value = cfgData.alamat||'';
+    document.getElementById('c-map').value = cfgData.mapsLink||'';
+  });
+}
+function saveCfg(){
+  cfgData={siteName:document.getElementById('c-name').value.trim(),tagline:document.getElementById('c-tag').value.trim(),whatsapp:document.getElementById('c-wa').value.trim(),alamat:document.getElementById('c-alm').value.trim(),mapsLink:document.getElementById('c-map').value.trim()};
+  saveData(buildFullData(),'Update konfigurasi website', function(ok){
+    if(ok) toast('Konfigurasi tersimpan ✅','ok');
+  });
+}
+function saveCreds(){
+  var p1=document.getElementById('c-pw1').value;
+  var p2=document.getElementById('c-pw2').value;
+  if(!p1){toast('Password wajib diisi','err');return;}
+  if(p1!==p2){toast('Konfirmasi password tidak cocok','err');return;}
+  var cfg=loadLocalConfig();
+  cfg.pass=p1; ADMIN_PASS=p1;
+  saveLocalConfig(cfg);
+  toast('Password diperbarui 🔒','ok');
+  document.getElementById('c-pw1').value='';
+  document.getElementById('c-pw2').value='';
+}
+
+// ── UI HELPERS ──
+function prevImg(inp,imgId){
+  var url=document.getElementById(inp).value.trim();
+  var img=document.getElementById(imgId);
+  if(url){img.src=url;img.classList.add('show');}else{img.classList.remove('show');img.src='';}
+}
+function rpFmt(n){
+  if(!n||String(n).trim()==='') return '—';
+  var num=Number(n);
+  if(!isNaN(num)&&num>0) return 'Rp '+num.toLocaleString('id-ID');
+  return String(n);
+}
+function lblSt(s){return s==='tersedia'?'Tersedia':s==='terjual'?'Terjual':'Indent';}
+function stClass(s){return s==='tersedia'?'t':s==='terjual'?'j':'i';}
+function toast(msg,type){
+  var el=document.getElementById('toast');
+  el.className='toast '+(type==='ok'?'ok':'err');
+  el.innerHTML='<span>'+(type==='ok'?'✅':'❌')+'</span> '+msg;
+  el.classList.add('show');
+  setTimeout(function(){el.classList.remove('show');},3500);
+}
+function bar(active){
+  var b=document.getElementById('lbar');
+  if(active){b.className='go';}else{b.className='done';setTimeout(function(){b.className='';},400);}
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeKvModD();closeJlModD();closeBnModD();closeConf();}
+});
+</script>
+</body>
+</html>
