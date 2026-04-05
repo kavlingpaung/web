@@ -361,7 +361,7 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       <div class="cfg-g">
         <div class="cfg-c">
           <h3>🌐 Info Website</h3>
-          <div class="fg"><label>Nama Usaha</label><input type="text" id="c-name" placeholder="Kavling Prima Sejahtera"></div>
+          <div class="fg"><label>Nama Usaha</label><input type="text" id="c-name" placeholder="Kavling Paung"></div>
           <div class="fg"><label>Tagline</label><textarea id="c-tag" rows="2" placeholder="Miliki tanah impian..."></textarea></div>
           <div class="fg"><label>Nomor WhatsApp</label><input type="text" id="c-wa" placeholder="628123456789"><span class="hint">Format: 62xxx tanpa + dan spasi</span></div>
           <div class="fg"><label>Alamat</label><textarea id="c-alm" rows="2" placeholder="Jl. Raya ..."></textarea></div>
@@ -1060,7 +1060,6 @@ function openKvMod(data,idx){
   document.getElementById('kv-fas').value = data?data.fasilitas:'';
   document.getElementById('kv-foto').value = data?data.foto:'';
   document.getElementById('kv-foto-url').value = data?data.foto:'';
-  document.getElementById('kv-fname').textContent = '';
   resetProg('kv');
   var pv=document.getElementById('kv-pv');
   if(data&&data.foto){pv.src=data.foto;pv.classList.add('show');}else{pv.classList.remove('show');pv.src='';}
@@ -1106,7 +1105,7 @@ function editJl(i){openJlMod(jlData[i],i);}
 function closeJlMod(e){if(e.target===document.getElementById('jl-mov'))closeJlModD();}
 function closeJlModD(){document.getElementById('jl-mov').classList.remove('open');document.body.style.overflow='';}
 function saveJl(){
-  var row={judul:document.getElementById('jl-jdl').value.trim(),deskripsi:document.getElementById('jl-dsc').value.trim(),url:(document.getElementById('jl-url').value||document.getElementById('jl-url-inp').value).trim()};
+  var row={judul:document.getElementById('jl-jdl').value.trim(),deskripsi:document.getElementById('jl-dsc').value.trim(),url:(document.getElementById('jl-url').value||document.getElementById('jl-url-input').value).trim()};
   if(!row.judul||!row.url){toast('Judul dan URL wajib diisi!','err');return;}
   var idx=document.getElementById('jl-ei').value;
   var isEdit=idx!=='';
@@ -1139,7 +1138,7 @@ function editBn(i){openBnMod(bnData[i],i);}
 function closeBnMod(e){if(e.target===document.getElementById('bn-mov'))closeBnModD();}
 function closeBnModD(){document.getElementById('bn-mov').classList.remove('open');document.body.style.overflow='';}
 function saveBn(){
-  var row={judul:document.getElementById('bn-jdl').value.trim(),url:(document.getElementById('bn-url').value||document.getElementById('bn-url-inp').value).trim(),deskripsi:document.getElementById('bn-dsc').value.trim(),urutan:document.getElementById('bn-ord').value.trim()||'99'};
+  var row={judul:document.getElementById('bn-jdl').value.trim(),url:(document.getElementById('bn-url').value||document.getElementById('bn-url-input').value).trim(),deskripsi:document.getElementById('bn-dsc').value.trim(),urutan:document.getElementById('bn-ord').value.trim()||'99'};
   if(!row.judul||!row.url){toast('Judul dan URL gambar wajib diisi!','err');return;}
   var idx=document.getElementById('bn-ei').value;
   var isEdit=idx!=='';
@@ -1359,7 +1358,7 @@ function openVidMod(data,idx){
   document.getElementById('vid-dsc').value = data?data.deskripsi:'';
   document.getElementById('vid-url').value = data?data.url:'';
   document.getElementById('vid-url-inp').value = data?data.url:'';
-  document.getElementById('vid-fname').textContent = '';
+  var vfn = document.getElementById('vid-fname'); if(vfn) vfn.textContent = '';
   var vp = document.getElementById('vid-vprev');
   if(data&&data.url){vp.src=data.url;vp.classList.add('show');}else{vp.classList.remove('show');vp.src='';}
   resetProg('vid');
