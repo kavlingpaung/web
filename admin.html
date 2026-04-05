@@ -361,7 +361,7 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       <div class="cfg-g">
         <div class="cfg-c">
           <h3>🌐 Info Website</h3>
-          <div class="fg"><label>Nama Usaha</label><input type="text" id="c-name" placeholder="Kavling Paung"></div>
+          <div class="fg"><label>Nama Usaha</label><input type="text" id="c-name" placeholder="Kavling Prima Sejahtera"></div>
           <div class="fg"><label>Tagline</label><textarea id="c-tag" rows="2" placeholder="Miliki tanah impian..."></textarea></div>
           <div class="fg"><label>Nomor WhatsApp</label><input type="text" id="c-wa" placeholder="628123456789"><span class="hint">Format: 62xxx tanpa + dan spasi</span></div>
           <div class="fg"><label>Alamat</label><textarea id="c-alm" rows="2" placeholder="Jl. Raya ..."></textarea></div>
@@ -1325,19 +1325,30 @@ function prevMedia(inpId, imgId, vidId){
   }
 }
 
+function delVid(i){ confDel('vid', i); }
 // ── VIDEO TABLE ──
 function renderVidTb(){
   document.getElementById('vid-cnt').textContent = vidData.length;
-  document.getElementById('vid-tb').innerHTML = vidData.length?vidData.map(function(v,i){
-    return '<tr>'
-      +'<td>'+(v.url?'<video style="width:60px;height:42px;border-radius:6px;object-fit:cover;background:#000" src="'+v.url+'" muted></video>':'<div class="no-img">🎥</div>')+'</td>'
-      +'<td><strong>'+(v.judul||'—')+'</strong></td>'
-      +'<td style="color:var(--ts);font-size:.82rem">'+(v.deskripsi||'—')+'</td>'
-      +'<td><div style="display:flex;gap:.35rem">'
-        +'<button class="btn bs bsm" onclick="editVid('+i+')">✏️</button>'
-        +'<button class="btn bd bsm" onclick="confDel('vid','+i+')">🗑️</button>'
-      +'</div></td></tr>';
-  }).join('') : '<tr class="em-row"><td colspan="4">Belum ada video</td></tr>';
+  if(!vidData.length){
+    document.getElementById('vid-tb').innerHTML = '<tr class="em-row"><td colspan="4">Belum ada video</td></tr>';
+    return;
+  }
+  var html = '';
+  for(var i=0; i<vidData.length; i++){
+    var v = vidData[i];
+    var thumb = v.url
+      ? '<video style="width:60px;height:42px;border-radius:6px;object-fit:cover;background:#000" src="' + v.url + '" muted></video>'
+      : '<div class="no-img">🎥</div>';
+    html += '<tr>'
+      + '<td>' + thumb + '</td>'
+      + '<td><strong>' + (v.judul || '—') + '</strong></td>'
+      + '<td style="color:var(--ts);font-size:.82rem">' + (v.deskripsi || '—') + '</td>'
+      + '<td><div style="display:flex;gap:.35rem">'
+      + '<button class="btn bs bsm" onclick="editVid(' + i + ')">✏️</button>'
+      + '<button class="btn bd bsm" onclick="delVid(' + i + ')">🗑️</button>'
+      + '</div></td></tr>';
+  }
+  document.getElementById('vid-tb').innerHTML = html;
 }
 
 // ── VIDEO MODAL ──
