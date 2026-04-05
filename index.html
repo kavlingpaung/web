@@ -129,6 +129,17 @@ section{padding:88px 5%}
 .foto-body h4{font-weight:600;margin-bottom:.25rem;font-size:.95rem}
 .foto-body p{font-size:.82rem;color:var(--ink-m)}
 
+/* VIDEO */
+#video{background:var(--paper)}
+.video-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.4rem}
+.video-c{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);box-shadow:var(--sh);background:var(--cream)}
+.video-c video{width:100%;height:210px;object-fit:cover;display:block;background:#000}
+.video-body{padding:1rem 1.2rem 1.2rem}
+.video-body h4{font-weight:600;margin-bottom:.25rem;font-size:.95rem}
+.video-body p{font-size:.82rem;color:var(--ink-m)}
+.video-empty{text-align:center;padding:3rem 2rem;color:var(--ink-m)}
+.video-empty div{font-size:2.5rem;margin-bottom:.8rem}
+
 /* KAVLING */
 #kavling{background:var(--paper)}
 .kv-top{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1.2rem;margin-bottom:1.8rem}
@@ -218,6 +229,12 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
 .lb{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;cursor:zoom-out;opacity:0;pointer-events:none;transition:opacity .3s}
 .lb.open{opacity:1;pointer-events:all}
 .lb img{max-width:96vw;max-height:92vh;border-radius:8px;object-fit:contain}
+.lb video{max-width:96vw;max-height:92vh;border-radius:8px;outline:none}
+.slide-vid{width:100%;height:520px;background:#1a2e1a;display:block;outline:none}
+.foto-img video{width:100%;height:100%;object-fit:cover;display:block}
+.m-img video{width:100%;height:100%;object-fit:cover}
+.prev-vid{width:100%;border-radius:8px;margin-top:.5rem;display:none}
+.prev-vid.show{display:block}
 .lb-close{position:absolute;top:20px;right:24px;color:white;font-size:2rem;cursor:pointer;opacity:.7;transition:opacity .2s;line-height:1}
 .lb-close:hover{opacity:1}
 
@@ -250,18 +267,19 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
 
 <!-- LOADER -->
 <div id="loader">
-  <div class="ld-logo" id="ld-txt">🌿 Kavling Paung</div>
+  <div class="ld-logo" id="ld-txt">🌿 Kavling Prima Sejahtera</div>
   <div class="ld-bar"><div class="ld-fill"></div></div>
 </div>
 
 <!-- NAV -->
 <nav id="nav">
   <div class="nav-i">
-    <a class="nav-brand" href="#hero" id="nb-brand">Kavling <span>Paung</span></a>
+    <a class="nav-brand" href="#hero" id="nb-brand">Kavling <span>Prima Sejahtera</span></a>
     <ul class="nav-links">
       <li><a href="#banner">Denah</a></li>
       <li><a href="#kavling">Kavling</a></li>
       <li><a href="#jalan">Foto Jalan</a></li>
+      <li><a href="#video">Video</a></li>
       <li><a href="#lokasi">Lokasi</a></li>
       <li><a class="nav-wa" href="#" onclick="bukaWA(event)">💬 WhatsApp</a></li>
     </ul>
@@ -272,6 +290,7 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
   <a href="#banner" onclick="closeMob()">🗺️ Denah</a>
   <a href="#kavling" onclick="closeMob()">🏡 Kavling</a>
   <a href="#jalan" onclick="closeMob()">📸 Foto Jalan</a>
+  <a href="#video" onclick="closeMob()">🎥 Video</a>
   <a href="#lokasi" onclick="closeMob()">📍 Lokasi</a>
   <a href="#" onclick="bukaWA(event);closeMob()">💬 WhatsApp</a>
 </div>
@@ -281,8 +300,8 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
   <div class="h-deco d1"></div><div class="h-deco d2"></div><div class="h-deco grid"></div>
   <div class="hero-wrap">
     <div class="h-left">
-      <div class="h-eyebrow">🌿 Kavling Investasi Masa Depan</div>
-      <h1 class="h-title"><span id="h-sitename">Kavling Paung</span><em id="h-tagline-em">Miliki tanah impian Anda</em></h1>
+      <div class="h-eyebrow">🌿 Kavling Premium Terpercaya</div>
+      <h1 class="h-title"><span id="h-sitename">Kavling Prima Sejahtera</span><em id="h-tagline-em">Miliki tanah impian Anda</em></h1>
       <p class="h-desc" id="h-tagline">Miliki tanah impian di lokasi premium.</p>
       <div class="h-btns">
         <a class="btn-gold" href="#kavling">🏡 Lihat Kavling</a>
@@ -315,12 +334,12 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
     <div class="s-tag">Keunggulan</div>
     <h2 class="s-title rv">Mengapa Memilih Kami?</h2>
     <div class="fitur-g">
-      <div class="fc rv"><div class="fc-ico g">📍</div><h3>Lokasi Strategis</h3><p>Dekat City Mall, RS AR Bunda, dan Hotel Santika.</p></div>
-      <div class="fc rv"><div class="fc-ico o">📜</div><h3>Sporadik</h3><p>Setiap kavling dilengkapi Sporadik yang aman.</p></div>
+      <div class="fc rv"><div class="fc-ico g">📍</div><h3>Lokasi Strategis</h3><p>Berada di kawasan berkembang pesat, akses mudah ke pusat kota dan fasilitas umum.</p></div>
+      <div class="fc rv"><div class="fc-ico o">📜</div><h3>Legalitas Terjamin</h3><p>Semua kavling dilengkapi dokumen legal yang lengkap dan sah secara hukum.</p></div>
       <div class="fc rv"><div class="fc-ico g">💰</div><h3>Harga Terjangkau</h3><p>Pilihan harga yang fleksibel dengan skema pembayaran yang dapat disesuaikan.</p></div>
-      <div class="fc rv"><div class="fc-ico o">🛣️</div><h3>Infrastruktur Memadai</h3><p>Jalan lebar Sudah Pengerasan, Sudah Masuk Listrik PLN.</p></div>
-      <div class="fc rv"><div class="fc-ico g">🌳</div><h3>Lingkungan Asri</h3><p>Masih banyak pepohonan dan tanaman.</p></div>
-      <div class="fc rv"><div class="fc-ico o">🤝</div><h3>Layanan Terpercaya</h3><p>Kami siap membantu proses pembelian dari awal hingga selesai.</p></div>
+      <div class="fc rv"><div class="fc-ico o">🛣️</div><h3>Infrastruktur Lengkap</h3><p>Jalan lebar beraspal, drainase baik, listrik dan air tersedia.</p></div>
+      <div class="fc rv"><div class="fc-ico g">🌳</div><h3>Lingkungan Asri</h3><p>Kawasan hijau dengan taman dan ruang terbuka untuk kenyamanan penghuni.</p></div>
+      <div class="fc rv"><div class="fc-ico o">🤝</div><h3>Layanan Terpercaya</h3><p>Tim kami siap membantu proses pembelian dari awal hingga selesai.</p></div>
     </div>
   </div>
 </section>
@@ -332,6 +351,16 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
     <h2 class="s-title rv">Foto Jalan & Lingkungan</h2>
     <p class="s-desc rv" style="margin-bottom:2.5rem">Kondisi nyata jalan dan lingkungan sekitar kavling.</p>
     <div class="foto-g" id="foto-grid"></div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section id="video">
+  <div class="wrap">
+    <div class="s-tag rv">Video</div>
+    <h2 class="s-title rv">Video Kawasan</h2>
+    <p class="s-desc rv" style="margin-bottom:2.5rem">Lihat langsung kondisi kawasan kavling melalui video.</p>
+    <div class="video-g" id="video-grid"></div>
   </div>
 </section>
 
@@ -404,8 +433,8 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
 <footer>
   <div class="ft-g">
     <div>
-      <div class="ft-brand" id="ft-brand">Kavling <span>Paung</span></div>
-      <p class="ft-desc">Menyediakan kavling strategis untuk investasi masa depan Anda.</p>
+      <div class="ft-brand" id="ft-brand">Kavling <span>Prima Sejahtera</span></div>
+      <p class="ft-desc">Menyediakan kavling premium dengan lokasi strategis dan legalitas terjamin untuk investasi masa depan Anda.</p>
       <a class="ft-wa" href="#" onclick="bukaWA(event)">💬 Hubungi Kami</a>
     </div>
     <div class="ft-col">
@@ -414,6 +443,7 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
         <li><a href="#banner">Denah</a></li>
         <li><a href="#fitur">Keunggulan</a></li>
         <li><a href="#kavling">Kavling</a></li>
+        <li><a href="#video">Video</a></li>
         <li><a href="#lokasi">Lokasi</a></li>
       </ul>
     </div>
@@ -426,7 +456,7 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
       </ul>
     </div>
   </div>
-  <p class="ft-btm" id="ft-btm">© 2025 Kavling Paung. Semua hak dilindungi.</p>
+  <p class="ft-btm" id="ft-btm">© 2025 Kavling Prima Sejahtera. Semua hak dilindungi.</p>
 </footer>
 
 <!-- WA FAB -->
@@ -449,7 +479,8 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
 <!-- LIGHTBOX -->
 <div class="lb" id="lb" onclick="closeLb()">
   <span class="lb-close" onclick="closeLb()">✕</span>
-  <img id="lb-img" src="" alt="">
+  <img id="lb-img" src="" alt="" style="display:none">
+  <video id="lb-vid" controls style="display:none" onclick="event.stopPropagation()"></video>
 </div>
 
 <script>
@@ -481,7 +512,7 @@ fetch(DATA_URL + '?t=' + Date.now())
   });
 
 function applyConfig(){
-  var n = cfg.siteName || 'Kavling Paung';
+  var n = cfg.siteName || 'Kavling Prima Sejahtera';
   var p = n.split(' ');
   var brand = p[0] + ' <span>' + p.slice(1).join(' ') + '</span>';
   document.getElementById('nb-brand').innerHTML = brand;
@@ -519,12 +550,22 @@ function renderBanner(data){
     return;
   }
   slideTotal = data.length; slideIdx = 0;
-  var slidesHtml = data.map(function(b,i){
-    return '<div class="slide">'+(b.url?'<img class="slide-img" src="'+b.url+'" alt="'+(b.judul||'')+'" loading="lazy" onclick="openLb(\''+b.url+'\')">':'<div class="slide-img-ph"><span>🖼️</span><p>'+(b.judul||'Gambar')+'</p></div>')+(b.judul||b.deskripsi?'<div class="slide-caption"><h3>'+(b.judul||'')+'</h3>'+(b.deskripsi?'<p>'+b.deskripsi+'</p>':'')+'</div>':'')+'</div>';
+  var slidesHtml = data.map(function(b){
+    var media;
+    if(!b.url){
+      media = '<div class="slide-img-ph"><span>🖼️</span><p>'+(b.judul||'Gambar')+'</p></div>';
+    } else if(isVid(b.url)){
+      media = '<video class="slide-vid" src="'+b.url+'" controls playsinline onclick="event.stopPropagation()"></video>';
+    } else {
+      media = '<img class="slide-img" src="'+b.url+'" alt="'+(b.judul||'')+'" loading="lazy" onclick="openLb(''+b.url+'')">';
+    }
+    return '<div class="slide">'+media+(b.judul||b.deskripsi?'<div class="slide-caption"><h3>'+(b.judul||'')+'</h3>'+(b.deskripsi?'<p>'+b.deskripsi+'</p>':'')+'</div>':'')+'</div>';
   }).join('');
   var dotsHtml = data.map(function(_,i){ return '<button class="dot'+(i===0?' on':'')+'" onclick="goSlide('+i+')"></button>'; }).join('');
   var thumbsHtml = data.map(function(b,i){
-    return b.url?'<img class="thumb'+(i===0?' on':'')+'" src="'+b.url+'" alt="'+(b.judul||'')+'" onclick="goSlide('+i+')" loading="lazy">':'<div class="thumb-ph'+(i===0?' on':'')+'" onclick="goSlide('+i+')">🖼️</div>';
+    if(!b.url) return '<div class="thumb-ph'+(i===0?' on':'')+'" onclick="goSlide('+i+')">🖼️</div>';
+    if(isVid(b.url)) return '<div class="thumb-ph'+(i===0?' on':'')+'" onclick="goSlide('+i+')" style="background:linear-gradient(135deg,#1a2e1a,#2c4a2e)">▶️</div>';
+    return '<img class="thumb'+(i===0?' on':'')+'" src="'+b.url+'" alt="'+(b.judul||'')+'" onclick="goSlide('+i+')" loading="lazy">';
   }).join('');
   wrap.innerHTML = '<div class="slider-wrap">'+(slideTotal>1?'<button class="slider-btn prev" onclick="prevSlide()">&#8249;</button>':'')+'<div class="slider-track" id="sl-track">'+slidesHtml+'</div>'+(slideTotal>1?'<button class="slider-btn next" onclick="nextSlide()">&#8250;</button>':'')+'</div>'+(slideTotal>1?'<div class="slider-dots" id="sl-dots">'+dotsHtml+'</div>':'')+(slideTotal>1?'<div class="thumb-strip" id="sl-thumbs">'+thumbsHtml+'</div>':'');
   if(slideTotal>1){ clearInterval(autoTimer); autoTimer=setInterval(function(){nextSlide();},5000); }
@@ -550,8 +591,35 @@ document.addEventListener('touchend',function(e){
 // ── JALAN ──
 function renderJalan(data){
   document.getElementById('foto-grid').innerHTML = (data&&data.length)?data.map(function(f){
-    return '<div class="foto-c" onclick="openLb(\''+f.url+'\')">'+'<div class="foto-img">'+(f.url?'<img src="'+f.url+'" alt="'+f.judul+'" loading="lazy">':'')+'</div>'+'<div class="foto-body"><h4>'+f.judul+'</h4><p>'+(f.deskripsi||'')+'</p></div></div>';
+    var media = '';
+    if(f.url){
+      if(isVid(f.url)){
+        media = '<video src="'+f.url+'" controls playsinline style="width:100%;height:200px;object-fit:cover;display:block"></video>';
+      } else {
+        media = '<img src="'+f.url+'" alt="'+f.judul+'" loading="lazy">';
+      }
+    }
+    var oc = (f.url && !isVid(f.url)) ? ' onclick="openLb(''+f.url+'')"' : '';
+    return '<div class="foto-c"'+oc+'><div class="foto-img">'+media+'</div><div class="foto-body"><h4>'+f.judul+'</h4><p>'+(f.deskripsi||'')+'</p></div></div>';
   }).join('') : '<p style="color:var(--ink-m)">Belum ada foto jalan.</p>';
+}
+
+// ── VIDEO ──
+function renderVideo(data){
+  var grid = document.getElementById('video-grid');
+  if(!data||!data.length){
+    grid.innerHTML='<div class="video-empty"><div>🎥</div><p>Belum ada video.</p></div>';
+    return;
+  }
+  grid.innerHTML = data.map(function(v){
+    return '<div class="video-c">'
+      +'<video controls preload="metadata" playsinline>'
+      +'<source src="'+v.url+'" type="video/mp4">'
+      +'Browser Anda tidak mendukung video.</video>'
+      +'<div class="video-body"><h4>'+(v.judul||'')+'</h4>'
+      +(v.deskripsi?'<p>'+v.deskripsi+'</p>':'')
+      +'</div></div>';
+  }).join('');
 }
 
 // ── FILTER ──
@@ -613,7 +681,15 @@ function showMod(kode){
   var waUrl='https://wa.me/'+waNum+'?text='+encodeURIComponent(waMsg);
   document.getElementById('m-title').textContent='Kavling '+k.kode;
   var mi=document.getElementById('m-img');
-  mi.innerHTML=k.foto?'<img src="'+k.foto+'" alt="'+k.kode+'" onerror="this.parentElement.innerHTML=\'<span style=font-size:3rem;opacity:.4>🏡</span>\'">':'<span style="font-size:3rem;opacity:.4">🏡</span>';
+  if(k.foto){
+    if(isVid(k.foto)){
+      mi.innerHTML='<video src="'+k.foto+'" controls style="width:100%;height:100%;object-fit:cover" onclick="event.stopPropagation()"></video>';
+    } else {
+      mi.innerHTML='<img src="'+k.foto+'" alt="'+k.kode+'" style="cursor:zoom-in" onclick="openLb(\''+k.foto+'\')" onerror="this.parentElement.innerHTML=\'<span style=font-size:3rem;opacity:.4>🏡</span>\'">';
+    }
+  } else {
+    mi.innerHTML='<span style="font-size:3rem;opacity:.4">🏡</span>';
+  }
   var tags=k.fasilitas&&k.fasilitas.trim()?'<div class="m-tags">'+k.fasilitas.split(',').map(function(f){return'<span class="kv-tag">'+f.trim()+'</span>';}).join('')+'</div>':'';
   var hPerM='';
   document.getElementById('m-body').innerHTML=
@@ -632,8 +708,25 @@ function closeMod(e){if(e.target===document.getElementById('ov'))closeModDirect(
 function closeModDirect(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
 
 // ── LIGHTBOX ──
-function openLb(url){if(!url)return;document.getElementById('lb-img').src=url;document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
-function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
+function isVid(url){return url&&/\.(mp4|webm|ogg|mov)(\?|$)/i.test(url);}
+function openLb(url){
+  if(!url)return;
+  var img=document.getElementById('lb-img');
+  var vid=document.getElementById('lb-vid');
+  if(isVid(url)){
+    vid.src=url; vid.style.display=''; img.style.display='none'; img.src='';
+  } else {
+    img.src=url; img.style.display=''; vid.style.display='none'; vid.src=''; vid.pause&&vid.pause();
+  }
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeLb(){
+  var vid=document.getElementById('lb-vid');
+  if(vid){vid.pause&&vid.pause();vid.src='';}
+  document.getElementById('lb').classList.remove('open');
+  document.body.style.overflow='';
+}
 
 function lblSt(s){return s==='tersedia'?'Tersedia':s==='terjual'?'Terjual':'Indent';}
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('on',scrollY>50);});
