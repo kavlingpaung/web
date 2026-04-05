@@ -121,5 +121,44 @@
       "deskripsi": "",
       "urutan": "3"
     }
+  ],
+   "video": [],
+  "keunggulan": [
+    {
+      "icon": "📍",
+      "judul": "Lokasi Strategis",
+      "deskripsi": "Berada di kawasan berkembang pesat, akses mudah ke pusat kota dan fasilitas umum.",
+      "warna": "g"
+    },
+    {
+      "icon": "📜",
+      "judul": "Legalitas Terjamin",
+      "deskripsi": "Semua kavling dilengkapi dokumen legal yang lengkap dan sah secara hukum.",
+      "warna": "o"
+    },
+    {
+      "icon": "💰",
+      "judul": "Harga Terjangkau",
+      "deskripsi": "Pilihan harga yang fleksibel dengan skema pembayaran yang dapat disesuaikan.",
+      "warna": "g"
+    },
+    {
+      "icon": "🛣️",
+      "judul": "Infrastruktur Lengkap",
+      "deskripsi": "Jalan lebar beraspal, drainase baik, listrik dan air tersedia.",
+      "warna": "o"
+    },
+    {
+      "icon": "🌳",
+      "judul": "Lingkungan Asri",
+      "deskripsi": "Kawasan hijau dengan taman dan ruang terbuka untuk kenyamanan penghuni.",
+      "warna": "g"
+    },
+    {
+      "icon": "🤝",
+      "judul": "Layanan Terpercaya",
+      "deskripsi": "Tim kami siap membantu proses pembelian dari awal hingga selesai.",
+      "warna": "o"
+    }
   ]
 }
