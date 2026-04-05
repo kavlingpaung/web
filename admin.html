@@ -262,6 +262,7 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       <button class="si" onclick="goPage('bn',this)"><span class="ico">🖼️</span><span>Banner/Site Plan</span></button>
       <button class="si" onclick="goPage('jl',this)"><span class="ico">🛣️</span><span>Foto Jalan</span></button>
       <button class="si" onclick="goPage('vid',this)"><span class="ico">🎥</span><span>Video</span></button>
+      <button class="si" onclick="goPage('ku',this)"><span class="ico">⭐</span><span>Keunggulan</span></button>
       <button class="si" onclick="goPage('cfg',this)"><span class="ico">⚙️</span><span>Konfigurasi</span></button>
     </nav>
     <div class="sb-ft">
@@ -353,6 +354,23 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
         <div style="overflow-x:auto">
           <table><thead><tr><th>Preview</th><th>Judul</th><th>Deskripsi</th><th>Aksi</th></tr></thead>
           <tbody id="vid-tb"><tr class="em-row"><td colspan="4">Memuat...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- KEUNGGULAN -->
+    <div class="page" id="pg-ku">
+      <div class="card">
+        <div class="c-hd">
+          <h3>Keunggulan (<span id="ku-cnt">0</span>)</h3>
+          <div class="c-act"><button class="btn bp" onclick="openKuMod()">+ Tambah</button></div>
+        </div>
+        <p style="padding:.75rem 1.4rem;font-size:.82rem;color:var(--ts);border-bottom:1px solid var(--bdr)">
+          Kelola poin keunggulan yang tampil di halaman utama website.
+        </p>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Icon</th><th>Judul</th><th>Deskripsi</th><th>Warna</th><th>Aksi</th></tr></thead>
+          <tbody id="ku-tb"><tr class="em-row"><td colspan="5">Memuat...</td></tr></tbody></table>
         </div>
       </div>
     </div>
@@ -560,6 +578,29 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
   </div>
 </div>
 
+<!-- MODAL KEUNGGULAN -->
+<div class="mov" id="ku-mov" onclick="closeKuMod(event)">
+  <div class="mbox">
+    <div class="m-hd"><h3 id="ku-mt">Tambah Keunggulan</h3><button class="mx" onclick="closeKuModD()">✕</button></div>
+    <div class="m-body">
+      <input type="hidden" id="ku-ei">
+      <div class="frow">
+        <div class="fg"><label>Icon (Emoji) *</label><input type="text" id="ku-icon" placeholder="📍" maxlength="4"></div>
+        <div class="fg">
+          <label>Warna Latar</label>
+          <select id="ku-warna">
+            <option value="g">Hijau (Green)</option>
+            <option value="o">Kuning (Orange/Gold)</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow s1"><div class="fg"><label>Judul *</label><input type="text" id="ku-judul" placeholder="Lokasi Strategis"></div></div>
+      <div class="frow s1"><div class="fg"><label>Deskripsi *</label><textarea id="ku-desk" rows="3" placeholder="Penjelasan singkat..."></textarea></div></div>
+    </div>
+    <div class="m-ft"><button class="btn bs" onclick="closeKuModD()">Batal</button><button class="btn bp" onclick="saveKu()">💾 Simpan</button></div>
+  </div>
+</div>
+
 <!-- CONFIRM -->
 <div class="conf-ov" id="conf-ov">
   <div class="conf-box">
@@ -581,7 +622,7 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
 // ═══════════════════════════════════════════════
 var GH_USER, GH_REPO, GH_TOKEN, ADMIN_PASS;
 var DATA_PATH = 'data/data.json';
-var kvData=[], jlData=[], bnData=[], vidData=[], cfgData={};
+var kvData=[], jlData=[], bnData=[], vidData=[], kuData=[], cfgData={};
 var DATA_SHA = null; // SHA file untuk update
 
 var pageMeta = {
@@ -590,6 +631,7 @@ var pageMeta = {
   bn:{t:'Banner / Site Plan',s:'Kelola gambar denah dan banner'},
   jl:{t:'Foto Jalan',s:'Kelola foto akses jalan'},
   vid:{t:'Video Kawasan',s:'Kelola video kawasan kavling'},
+  ku:{t:'Keunggulan',s:'Kelola poin keunggulan di halaman utama'},
   cfg:{t:'Konfigurasi',s:'Pengaturan website dan akun admin'}
 };
 
@@ -947,6 +989,7 @@ function getFullData(cb){
     jlData  = d.jalan||[];
     bnData  = (d.banner||[]).sort(function(a,b){return(Number(a.urutan)||99)-(Number(b.urutan)||99);});
     vidData = d.video||[];
+    kuData  = d.keunggulan||[];
     cfgData = d.config||{};
     cb(d);
   });
@@ -955,7 +998,7 @@ function getFullData(cb){
 // ── LOAD ALL — loadCfgForm dipanggil sequential setelah loadAll selesai ──
 function loadAll(){
   getFullData(function(d){
-    renderDash(); renderKvTb(); renderJlTb(); renderBnTb(); renderVidTb();
+    renderDash(); renderKvTb(); renderJlTb(); renderBnTb(); renderVidTb(); renderKuTb();
     // Isi form config dari data yang sudah diambil (tidak fetch ulang)
     cfgData = d.config||{};
     document.getElementById('c-name').value = cfgData.siteName||'';
@@ -1046,7 +1089,7 @@ function renderBnTb(){
 
 // ── SAVE HELPER ──
 function buildFullData(){
-  return {config:cfgData, kavling:kvData, jalan:jlData, banner:bnData, video:vidData};
+  return {config:cfgData, kavling:kvData, jalan:jlData, banner:bnData, video:vidData, keunggulan:kuData};
 }
 
 // ── KAVLING MODAL ──
@@ -1154,7 +1197,7 @@ function saveBn(){
 var pendDel=null;
 function confDel(type,idx){
   pendDel={type:type,idx:idx};
-  var lbl=type==='kv'?'Kavling '+(kvData[idx]&&kvData[idx].kode):type==='jl'?'Foto "'+(jlData[idx]&&jlData[idx].judul)+'"':type==='vid'?'Video "'+(vidData[idx]&&vidData[idx].judul)+'"':'Banner "'+(bnData[idx]&&bnData[idx].judul)+'"';
+  var lbl=type==='kv'?'Kavling '+(kvData[idx]&&kvData[idx].kode):type==='jl'?'Foto "'+(jlData[idx]&&jlData[idx].judul)+'"':type==='vid'?'Video "'+(vidData[idx]&&vidData[idx].judul)+'"':type==='ku'?'Keunggulan "'+(kuData[idx]&&kuData[idx].judul)+'"':'Banner "'+(bnData[idx]&&bnData[idx].judul)+'"';
   document.getElementById('conf-t').textContent='Hapus '+lbl+'?';
   document.getElementById('conf-ov').classList.add('open');
   document.getElementById('conf-ok').onclick=execDel;
@@ -1169,12 +1212,14 @@ function execDel(){
   if(t==='kv'){ removed=kvData.splice(i,1)[0]; }
   else if(t==='jl'){ removed=jlData.splice(i,1)[0]; }
   else if(t==='vid'){ removed=vidData.splice(i,1)[0]; }
+  else if(t==='ku'){ removed=kuData.splice(i,1)[0]; }
   else { removed=bnData.splice(i,1)[0]; }
   saveData(buildFullData(),'Hapus data', function(ok){
     if(ok){
       if(t==='kv'){renderKvTb();renderDash();}
       else if(t==='jl'){renderJlTb();}
       else if(t==='vid'){renderVidTb();}
+      else if(t==='ku'){renderKuTb();}
       else{renderBnTb();}
       toast('Data dihapus ✅','ok');
     } else {
@@ -1182,10 +1227,12 @@ function execDel(){
       if(t==='kv') kvData.splice(i,0,removed);
       else if(t==='jl') jlData.splice(i,0,removed);
       else if(t==='vid') vidData.splice(i,0,removed);
+      else if(t==='ku') kuData.splice(i,0,removed);
       else bnData.splice(i,0,removed);
       if(t==='kv') renderKvTb();
       else if(t==='jl') renderJlTb();
       else if(t==='vid') renderVidTb();
+      else if(t==='ku') renderKuTb();
       else renderBnTb();
     }
   });
@@ -1453,6 +1500,61 @@ function jl_urlInput(v){ document.getElementById('jl-url').value=v; var pv=docum
 function bn_urlInput(v){ document.getElementById('bn-url').value=v; var pv=document.getElementById('bn-pv'); if(v){pv.src=v;pv.classList.add('show');}else{pv.classList.remove('show');} }
 function vid_urlInput(v){ document.getElementById('vid-url').value=v; var vp=document.getElementById('vid-vprev'); if(v){vp.src=v;vp.classList.add('show');}else{vp.classList.remove('show');} }
 
+// ── KEUNGGULAN TABLE ──
+function renderKuTb(){
+  document.getElementById('ku-cnt').textContent = kuData.length;
+  if(!kuData.length){
+    document.getElementById('ku-tb').innerHTML = '<tr class="em-row"><td colspan="5">Belum ada data keunggulan</td></tr>';
+    return;
+  }
+  var html = '';
+  for(var i=0; i<kuData.length; i++){
+    var k = kuData[i];
+    html += '<tr>'
+      +'<td style="font-size:1.4rem;text-align:center">'+(k.icon||'—')+'</td>'
+      +'<td><strong>'+(k.judul||'—')+'</strong></td>'
+      +'<td style="color:var(--ts);font-size:.82rem;max-width:220px">'+(k.deskripsi||'—')+'</td>'
+      +'<td><span class="badge" style="background:rgba(79,110,247,.15);color:var(--acc)">'+(k.warna==='o'?'Kuning':'Hijau')+'</span></td>'
+      +'<td><div style="display:flex;gap:.35rem">'
+      +'<button class="btn bs bsm" onclick="editKu('+i+')">✏️</button>'
+      +'<button class="btn bd bsm" onclick="delKu('+i+')">🗑️</button>'
+      +'</div></td></tr>';
+  }
+  document.getElementById('ku-tb').innerHTML = html;
+}
+function delKu(i){ confDel('ku', i); }
+
+// ── KEUNGGULAN MODAL ──
+function openKuMod(data, idx){
+  document.getElementById('ku-mt').textContent = data ? 'Edit Keunggulan' : 'Tambah Keunggulan';
+  document.getElementById('ku-ei').value = idx !== undefined ? idx : '';
+  document.getElementById('ku-icon').value = data ? data.icon : '';
+  document.getElementById('ku-judul').value = data ? data.judul : '';
+  document.getElementById('ku-desk').value = data ? data.deskripsi : '';
+  document.getElementById('ku-warna').value = data ? (data.warna||'g') : 'g';
+  document.getElementById('ku-mov').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function editKu(i){ openKuMod(kuData[i], i); }
+function closeKuMod(e){ if(e.target===document.getElementById('ku-mov')) closeKuModD(); }
+function closeKuModD(){ document.getElementById('ku-mov').classList.remove('open'); document.body.style.overflow=''; }
+function saveKu(){
+  var row = {
+    icon: document.getElementById('ku-icon').value.trim(),
+    judul: document.getElementById('ku-judul').value.trim(),
+    deskripsi: document.getElementById('ku-desk').value.trim(),
+    warna: document.getElementById('ku-warna').value
+  };
+  if(!row.icon||!row.judul||!row.deskripsi){ toast('Semua field wajib diisi!','err'); return; }
+  var idx = document.getElementById('ku-ei').value;
+  var isEdit = idx !== '';
+  if(isEdit) kuData[Number(idx)] = row; else kuData.push(row);
+  saveData(buildFullData(), (isEdit?'Edit':'Tambah')+' keunggulan', function(ok){
+    if(ok){ closeKuModD(); renderKuTb(); toast('Keunggulan '+(isEdit?'diperbarui':'ditambahkan')+' ✅','ok'); }
+    else { if(isEdit) kuData[Number(idx)] = kuData[Number(idx)]; else kuData.pop(); }
+  });
+}
+
 // ── UI HELPERS ──
 function prevImg(inp,imgId){
   var url=document.getElementById(inp).value.trim();
@@ -1479,7 +1581,7 @@ function bar(active){
   if(active){b.className='go';}else{b.className='done';setTimeout(function(){b.className='';},400);}
 }
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){closeKvModD();closeJlModD();closeBnModD();closeVidModD();closeConf();}
+  if(e.key==='Escape'){closeKvModD();closeJlModD();closeBnModD();closeVidModD();closeKuModD();closeConf();}
 });
 </script>
 </body>
