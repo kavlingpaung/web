@@ -270,14 +270,7 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
   <div class="wrap">
     <div class="s-tag">Keunggulan</div>
     <h2 class="s-title rv">Mengapa Memilih Kami?</h2>
-    <div class="fitur-g">
-      <div class="fc rv"><div class="fc-ico g">📍</div><h3>Lokasi Strategis</h3><p>Berada di kawasan berkembang pesat, akses mudah ke pusat kota dan fasilitas umum.</p></div>
-      <div class="fc rv"><div class="fc-ico o">📜</div><h3>Legalitas Terjamin</h3><p>Semua kavling dilengkapi dokumen legal yang lengkap dan sah secara hukum.</p></div>
-      <div class="fc rv"><div class="fc-ico g">💰</div><h3>Harga Terjangkau</h3><p>Pilihan harga yang fleksibel dengan skema pembayaran yang dapat disesuaikan.</p></div>
-      <div class="fc rv"><div class="fc-ico o">🛣️</div><h3>Infrastruktur Lengkap</h3><p>Jalan lebar beraspal, drainase baik, listrik dan air tersedia.</p></div>
-      <div class="fc rv"><div class="fc-ico g">🌳</div><h3>Lingkungan Asri</h3><p>Kawasan hijau dengan taman dan ruang terbuka untuk kenyamanan penghuni.</p></div>
-      <div class="fc rv"><div class="fc-ico o">🤝</div><h3>Layanan Terpercaya</h3><p>Tim kami siap membantu proses pembelian dari awal hingga selesai.</p></div>
-    </div>
+    <div class="fitur-g" id="fitur-grid"></div>
   </div>
 </section>
 <section id="jalan">
@@ -403,6 +396,7 @@ fetch(DATA_URL+'?t='+Date.now())
     renderJalan(d.jalan||[]);
     renderBanner(d.banner||[]);
     renderVideo(d.video||[]);
+    renderKeunggulan(d.keunggulan||[]);
     setTimeout(function(){document.getElementById('loader').classList.add('off');},1500);
     initReveal();
   })
@@ -492,6 +486,35 @@ function renderJalan(data){
     var oc=(f.url&&!isVid(f.url))?' onclick="openLb(\''+f.url+'\')"':'';
     return '<div class="foto-c"'+oc+'><div class="foto-img">'+media+'</div><div class="foto-body"><h4>'+f.judul+'</h4><p>'+(f.deskripsi||'')+'</p></div></div>';
   }).join(''):'<p style="color:var(--ink-m)">Belum ada foto jalan.</p>';
+}
+
+// ── KEUNGGULAN ──
+function renderKeunggulan(data){
+  var grid = document.getElementById('fitur-grid');
+  if(!grid) return;
+  if(!data||!data.length){
+    // Default jika tidak ada data
+    data = [
+      {icon:'📍',judul:'Lokasi Strategis',deskripsi:'Berada di kawasan berkembang pesat, akses mudah ke pusat kota dan fasilitas umum.',warna:'g'},
+      {icon:'📜',judul:'Legalitas Terjamin',deskripsi:'Semua kavling dilengkapi dokumen legal yang lengkap dan sah secara hukum.',warna:'o'},
+      {icon:'💰',judul:'Harga Terjangkau',deskripsi:'Pilihan harga yang fleksibel dengan skema pembayaran yang dapat disesuaikan.',warna:'g'},
+      {icon:'🛣️',judul:'Infrastruktur Lengkap',deskripsi:'Jalan lebar beraspal, drainase baik, listrik dan air tersedia.',warna:'o'},
+      {icon:'🌳',judul:'Lingkungan Asri',deskripsi:'Kawasan hijau dengan taman dan ruang terbuka untuk kenyamanan penghuni.',warna:'g'},
+      {icon:'🤝',judul:'Layanan Terpercaya',deskripsi:'Tim kami siap membantu proses pembelian dari awal hingga selesai.',warna:'o'}
+    ];
+  }
+  grid.innerHTML = data.map(function(k){
+    return '<div class="fc rv">'
+      +'<div class="fc-ico '+(k.warna||'g')+'">'+k.icon+'</div>'
+      +'<h3>'+k.judul+'</h3>'
+      +'<p>'+k.deskripsi+'</p>'
+      +'</div>';
+  }).join('');
+  // Re-observe untuk animasi reveal
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting)e.target.classList.add('vis');});
+  },{threshold:.1});
+  grid.querySelectorAll('.rv').forEach(function(el){obs.observe(el);});
 }
 
 // ── VIDEO ──
