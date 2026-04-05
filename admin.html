@@ -46,6 +46,24 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .l-cfg-link a{color:var(--acc);cursor:pointer;text-decoration:underline}
 .sec-badge{display:inline-flex;align-items:center;gap:.3rem;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80;border-radius:5px;padding:.18rem .55rem;font-size:.72rem;font-weight:600;margin-left:.5rem}
 
+/* ── UPLOAD ── */
+.upload-area{border:2px dashed var(--bdr);border-radius:10px;padding:1.5rem;text-align:center;cursor:pointer;transition:border .2s;background:var(--bg)}
+.upload-area:hover,.upload-area.drag{border-color:var(--acc);background:rgba(79,110,247,.04)}
+.upload-area input[type=file]{display:none}
+.upload-area .ico{font-size:2rem;margin-bottom:.5rem}
+.upload-area p{font-size:.82rem;color:var(--ts);margin-bottom:.3rem}
+.upload-area small{font-size:.74rem;color:var(--tm)}
+.up-preview{width:100%;height:120px;border-radius:7px;object-fit:cover;background:var(--sur2);border:1px solid var(--bdr);display:none;margin-top:.7rem}
+.up-preview.show{display:block}
+.up-vid-preview{width:100%;border-radius:7px;background:#000;display:none;margin-top:.7rem;max-height:150px}
+.up-vid-preview.show{display:block}
+.prog-wrap{margin-top:.7rem;display:none}
+.prog-wrap.show{display:block}
+.prog-bar{height:4px;background:var(--bdr);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--acc);border-radius:2px;width:0;transition:width .3s}
+.prog-txt{font-size:.75rem;color:var(--ts);margin-top:.3rem;text-align:center}
+.up-name{font-size:.78rem;color:var(--acc);margin-top:.4rem;word-break:break-all}
+
 /* ── APP ── */
 #app{display:none;min-height:100vh}
 .sb{position:fixed;left:0;top:0;bottom:0;width:232px;background:var(--sur);border-right:1px solid var(--bdr);display:flex;flex-direction:column;z-index:100}
@@ -128,6 +146,22 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
 .hint{font-size:.73rem;color:var(--tm);margin-top:.15rem}
 .prev-img{width:100%;height:130px;border-radius:7px;object-fit:cover;background:var(--sur2);border:1px solid var(--bdr);display:none;margin-top:.5rem}
 .prev-img.show{display:block}
+.prev-vid{width:100%;border-radius:7px;background:var(--sur2);border:1px solid var(--bdr);display:none;margin-top:.5rem;max-height:160px}
+.prev-vid.show{display:block}
+.upload-area{border:2px dashed var(--bdr);border-radius:8px;padding:1.1rem;text-align:center;cursor:pointer;transition:border .2s;margin-top:.5rem;position:relative}
+.upload-area:hover{border-color:var(--acc)}
+.upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-area .ua-ico{font-size:1.6rem;margin-bottom:.3rem}
+.upload-area p{font-size:.78rem;color:var(--ts)}
+.upload-area p strong{color:var(--acc)}
+.prog-wrap{margin-top:.6rem;display:none}
+.prog-wrap.show{display:block}
+.prog-bar{height:6px;background:var(--bdr);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;background:var(--acc);border-radius:3px;width:0%;transition:width .3s}
+.prog-txt{font-size:.74rem;color:var(--ts);margin-top:.3rem;text-align:center}
+.tab-row{display:flex;gap:.4rem;margin-bottom:.75rem}
+.tab-btn{padding:.35rem .85rem;border-radius:6px;border:1.5px solid var(--bdr);background:transparent;color:var(--ts);font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.tab-btn.on{background:rgba(79,110,247,.15);border-color:var(--acc);color:var(--acc)}
 .m-ft{padding:1.1rem 1.4rem;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:.65rem;position:sticky;bottom:0;background:var(--sur)}
 
 .cfg-g{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem}
@@ -226,6 +260,7 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       <button class="si" onclick="goPage('kv',this)"><span class="ico">🏡</span><span>Data Kavling</span></button>
       <button class="si" onclick="goPage('bn',this)"><span class="ico">🖼️</span><span>Banner/Site Plan</span></button>
       <button class="si" onclick="goPage('jl',this)"><span class="ico">🛣️</span><span>Foto Jalan</span></button>
+      <button class="si" onclick="goPage('vid',this)"><span class="ico">🎥</span><span>Video</span></button>
       <button class="si" onclick="goPage('cfg',this)"><span class="ico">⚙️</span><span>Konfigurasi</span></button>
     </nav>
     <div class="sb-ft">
@@ -304,6 +339,23 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       </div>
     </div>
 
+    <!-- VIDEO -->
+    <div class="page" id="pg-vid">
+      <div class="card">
+        <div class="c-hd">
+          <h3>Video Kawasan (<span id="vid-cnt">0</span>)</h3>
+          <div class="c-act"><button class="btn bp" onclick="openVidMod()">+ Tambah Video</button></div>
+        </div>
+        <p style="padding:.75rem 1.4rem;font-size:.82rem;color:var(--ts);border-bottom:1px solid var(--bdr)">
+          Upload video langsung dari perangkat Anda. Video disimpan di GitHub repository. Maksimal <strong>50MB</strong> per video.
+        </p>
+        <div style="overflow-x:auto">
+          <table><thead><tr><th>Preview</th><th>Judul</th><th>Deskripsi</th><th>Aksi</th></tr></thead>
+          <tbody id="vid-tb"><tr class="em-row"><td colspan="4">Memuat...</td></tr></tbody></table>
+        </div>
+      </div>
+    </div>
+
     <!-- KONFIGURASI -->
     <div class="page" id="pg-cfg">
       <div class="cfg-g">
@@ -361,9 +413,26 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       </div>
       <div class="frow s1">
         <div class="fg">
-          <label>URL Foto Kavling</label>
-          <input type="text" id="kv-foto" placeholder="https://i.imgur.com/xxx.jpg" oninput="prevImg('kv-foto','kv-pv')">
-          <span class="hint">Imgur: upload → salin URL langsung | Google Drive: https://lh3.googleusercontent.com/d/FILE_ID</span>
+          <label>Foto Kavling</label>
+          <div class="tab-row">
+            <button class="tab-btn on" onclick="switchTab('kv','upload',this)">⬆️ Upload File</button>
+            <button class="tab-btn" onclick="switchTab('kv','url',this)">🔗 URL Langsung</button>
+          </div>
+          <div id="kv-tab-upload">
+            <div class="upload-area" onclick="document.getElementById('kv-file').click()">
+              <input type="file" id="kv-file" accept="image/*" onchange="handleUpload('kv-file','kv-foto','kv-pv',null,'images')">
+              <div class="ua-ico">📁</div>
+              <p>Klik atau drag gambar ke sini<br><strong>JPG, PNG, WEBP</strong> maks 5MB</p>
+            </div>
+            <div class="prog-wrap" id="kv-prog">
+              <div class="prog-bar"><div class="prog-fill" id="kv-prog-fill"></div></div>
+              <div class="prog-txt" id="kv-prog-txt">Mengupload...</div>
+            </div>
+          </div>
+          <div id="kv-tab-url" style="display:none">
+            <input type="text" id="kv-foto-url" placeholder="https://..." oninput="document.getElementById('kv-foto').value=this.value;prevImg('kv-foto','kv-pv')">
+          </div>
+          <input type="hidden" id="kv-foto">
           <img class="prev-img" id="kv-pv" src="" alt="Preview">
         </div>
       </div>
@@ -382,10 +451,28 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       <div class="frow s1"><div class="fg"><label>Deskripsi</label><input type="text" id="jl-dsc" placeholder="Pintu masuk utama kompleks"></div></div>
       <div class="frow s1">
         <div class="fg">
-          <label>URL Foto *</label>
-          <input type="text" id="jl-url" placeholder="https://i.imgur.com/xxx.jpg" oninput="prevImg('jl-url','jl-pv')">
-          <span class="hint">Upload ke imgur.com lalu salin URL gambar</span>
+          <label>Foto / Video</label>
+          <div class="tab-row">
+            <button class="tab-btn on" onclick="switchTab('jl','upload',this)">⬆️ Upload File</button>
+            <button class="tab-btn" onclick="switchTab('jl','url',this)">🔗 URL Langsung</button>
+          </div>
+          <div id="jl-tab-upload">
+            <div class="upload-area" onclick="document.getElementById('jl-file').click()">
+              <input type="file" id="jl-file" accept="image/*,video/*" onchange="handleUpload('jl-file','jl-url','jl-pv','jl-vid','media')">
+              <div class="ua-ico">📁</div>
+              <p>Klik atau drag file ke sini<br><strong>Gambar (JPG/PNG) atau Video (MP4)</strong> maks 25MB</p>
+            </div>
+            <div class="prog-wrap" id="jl-prog">
+              <div class="prog-bar"><div class="prog-fill" id="jl-prog-fill"></div></div>
+              <div class="prog-txt" id="jl-prog-txt">Mengupload...</div>
+            </div>
+          </div>
+          <div id="jl-tab-url" style="display:none">
+            <input type="text" id="jl-url-input" placeholder="https://..." oninput="document.getElementById('jl-url').value=this.value;prevMedia('jl-url','jl-pv','jl-vid')">
+          </div>
+          <input type="hidden" id="jl-url">
           <img class="prev-img" id="jl-pv" src="" alt="Preview">
+          <video class="prev-vid" id="jl-vid" controls></video>
         </div>
       </div>
     </div>
@@ -403,10 +490,28 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       <div class="frow s1"><div class="fg"><label>Deskripsi</label><input type="text" id="bn-dsc" placeholder="Keterangan singkat (opsional)"></div></div>
       <div class="frow s1">
         <div class="fg">
-          <label>URL Gambar *</label>
-          <input type="text" id="bn-url" placeholder="https://i.imgur.com/xxx.jpg" oninput="prevImg('bn-url','bn-pv')">
-          <span class="hint">Upload ke imgur.com lalu salin URL gambar langsung</span>
+          <label>Gambar / Video</label>
+          <div class="tab-row">
+            <button class="tab-btn on" onclick="switchTab('bn','upload',this)">⬆️ Upload File</button>
+            <button class="tab-btn" onclick="switchTab('bn','url',this)">🔗 URL Langsung</button>
+          </div>
+          <div id="bn-tab-upload">
+            <div class="upload-area" onclick="document.getElementById('bn-file').click()">
+              <input type="file" id="bn-file" accept="image/*,video/*" onchange="handleUpload('bn-file','bn-url','bn-pv','bn-vid','media')">
+              <div class="ua-ico">📁</div>
+              <p>Klik atau drag file ke sini<br><strong>Gambar (JPG/PNG) atau Video (MP4)</strong> maks 25MB</p>
+            </div>
+            <div class="prog-wrap" id="bn-prog">
+              <div class="prog-bar"><div class="prog-fill" id="bn-prog-fill"></div></div>
+              <div class="prog-txt" id="bn-prog-txt">Mengupload...</div>
+            </div>
+          </div>
+          <div id="bn-tab-url" style="display:none">
+            <input type="text" id="bn-url-input" placeholder="https://..." oninput="document.getElementById('bn-url').value=this.value;prevMedia('bn-url','bn-pv','bn-vid')">
+          </div>
+          <input type="hidden" id="bn-url">
           <img class="prev-img" id="bn-pv" src="" alt="Preview">
+          <video class="prev-vid" id="bn-vid" controls></video>
         </div>
       </div>
       <div class="frow s1"><div class="fg">
@@ -416,6 +521,41 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       </div></div>
     </div>
     <div class="m-ft"><button class="btn bs" onclick="closeBnModD()">Batal</button><button class="btn bp" onclick="saveBn()">💾 Simpan</button></div>
+  </div>
+</div>
+
+<!-- MODAL VIDEO -->
+<div class="mov" id="vid-mov" onclick="closeVidMod(event)">
+  <div class="mbox">
+    <div class="m-hd"><h3 id="vid-mt">Tambah Video</h3><button class="mx" onclick="closeVidModD()">✕</button></div>
+    <div class="m-body">
+      <input type="hidden" id="vid-ei">
+      <div class="frow s1"><div class="fg"><label>Judul Video *</label><input type="text" id="vid-jdl" placeholder="Video Kawasan Blok B"></div></div>
+      <div class="frow s1"><div class="fg"><label>Deskripsi</label><input type="text" id="vid-dsc" placeholder="Kondisi jalan dan lingkungan (opsional)"></div></div>
+      <div class="frow s1">
+        <div class="fg">
+          <label>File Video *</label>
+          <div class="upload-area" onclick="document.getElementById('vid-file').click()" id="vid-upload-area"
+            ondragover="event.preventDefault();this.classList.add('drag')"
+            ondragleave="this.classList.remove('drag')"
+            ondrop="handleDrop(event,'vid')">
+            <input type="file" id="vid-file" accept="video/mp4,video/webm,video/ogg,video/*" onchange="handleFileSelect(this,'vid')">
+            <div class="ico">🎥</div>
+            <p>Klik atau drag video ke sini</p>
+            <small>MP4, WEBM — maks 50MB</small>
+            <div class="up-name" id="vid-fname"></div>
+          </div>
+          <video class="up-vid-preview" id="vid-vprev" controls></video>
+          <div class="prog-wrap" id="vid-prog">
+            <div class="prog-bar"><div class="prog-fill" id="vid-pfill"></div></div>
+            <div class="prog-txt" id="vid-ptxt">Mengupload...</div>
+          </div>
+          <input type="hidden" id="vid-url">
+          <span class="hint" style="margin-top:.4rem">Atau isi URL langsung: <input type="text" id="vid-url-inp" placeholder="https://raw.githubusercontent.com/..." style="background:var(--bg);border:1px solid var(--bdr);border-radius:5px;padding:.3rem .6rem;font-size:.78rem;color:var(--txt);outline:none;width:100%;margin-top:.3rem" oninput="vid_urlInput(this.value)"></span>
+        </div>
+      </div>
+    </div>
+    <div class="m-ft"><button class="btn bs" onclick="closeVidModD()">Batal</button><button class="btn bp" onclick="saveVid()">💾 Simpan</button></div>
   </div>
 </div>
 
@@ -440,14 +580,15 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
 // ═══════════════════════════════════════════════
 var GH_USER, GH_REPO, GH_TOKEN, ADMIN_PASS;
 var DATA_PATH = 'data/data.json';
-var kvData=[], jlData=[], bnData=[], cfgData={};
+var kvData=[], jlData=[], bnData=[], vidData=[], cfgData={};
 var DATA_SHA = null; // SHA file untuk update
 
 var pageMeta = {
   dash:{t:'Dashboard',s:'Ringkasan data kavling'},
   kv:{t:'Data Kavling',s:'Kelola daftar dan harga kavling'},
-  jl:{t:'Foto Jalan',s:'Kelola foto akses jalan'},
   bn:{t:'Banner / Site Plan',s:'Kelola gambar denah dan banner'},
+  jl:{t:'Foto Jalan',s:'Kelola foto akses jalan'},
+  vid:{t:'Video Kawasan',s:'Kelola video kawasan kavling'},
   cfg:{t:'Konfigurasi',s:'Pengaturan website dan akun admin'}
 };
 
@@ -717,6 +858,44 @@ function fetchData(cb){
   .catch(function(e){ bar(false); toast('❌ Gagal ambil data: '+e.message,'err'); });
 }
 
+// ── UPLOAD FILE KE GITHUB (gambar/video) ──
+function uploadFile(file, folder, onProgress, cb){
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var base64 = e.target.result.split(',')[1];
+    var safeName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    var path = 'assets/' + folder + '/' + safeName;
+    var url = 'https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+path;
+    if(onProgress) onProgress(60);
+    fetch(url, {
+      method:'PUT',
+      headers:{
+        'Authorization':'token '+GH_TOKEN,
+        'Accept':'application/vnd.github.v3+json',
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Upload '+folder+': '+safeName,
+        content: base64
+      })
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(onProgress) onProgress(100);
+      if(d.content && d.content.download_url){
+        cb(null, d.content.download_url);
+      } else {
+        cb(d.message || 'Upload gagal');
+      }
+    })
+    .catch(function(e){ cb(e.message); });
+  };
+  reader.onprogress = function(e){
+    if(e.lengthComputable && onProgress) onProgress(Math.round(e.loaded/e.total*50));
+  };
+  reader.readAsDataURL(file);
+}
+
 // saveData: selalu refresh SHA terbaru sebelum PUT agar tidak konflik SHA basi
 function saveData(content, msg, cb){
   bar(true);
@@ -766,6 +945,7 @@ function getFullData(cb){
     kvData  = d.kavling||[];
     jlData  = d.jalan||[];
     bnData  = (d.banner||[]).sort(function(a,b){return(Number(a.urutan)||99)-(Number(b.urutan)||99);});
+    vidData = d.video||[];
     cfgData = d.config||{};
     cb(d);
   });
@@ -774,7 +954,7 @@ function getFullData(cb){
 // ── LOAD ALL — loadCfgForm dipanggil sequential setelah loadAll selesai ──
 function loadAll(){
   getFullData(function(d){
-    renderDash(); renderKvTb(); renderJlTb(); renderBnTb();
+    renderDash(); renderKvTb(); renderJlTb(); renderBnTb(); renderVidTb();
     // Isi form config dari data yang sudah diambil (tidak fetch ulang)
     cfgData = d.config||{};
     document.getElementById('c-name').value = cfgData.siteName||'';
@@ -865,7 +1045,7 @@ function renderBnTb(){
 
 // ── SAVE HELPER ──
 function buildFullData(){
-  return {config:cfgData, kavling:kvData, jalan:jlData, banner:bnData};
+  return {config:cfgData, kavling:kvData, jalan:jlData, banner:bnData, video:vidData};
 }
 
 // ── KAVLING MODAL ──
@@ -879,8 +1059,14 @@ function openKvMod(data,idx){
   document.getElementById('kv-st').value = data?data.status:'tersedia';
   document.getElementById('kv-fas').value = data?data.fasilitas:'';
   document.getElementById('kv-foto').value = data?data.foto:'';
+  document.getElementById('kv-foto-url').value = data?data.foto:'';
+  document.getElementById('kv-fname').textContent = '';
+  resetProg('kv');
   var pv=document.getElementById('kv-pv');
   if(data&&data.foto){pv.src=data.foto;pv.classList.add('show');}else{pv.classList.remove('show');pv.src='';}
+  // Reset upload input
+  document.getElementById('kv-file').value='';
+  document.getElementById('kv-foto-url') && (document.getElementById('kv-foto-url').value='');
   document.getElementById('kv-mov').classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -888,7 +1074,7 @@ function editKv(i){openKvMod(kvData[i],i);}
 function closeKvMod(e){if(e.target===document.getElementById('kv-mov'))closeKvModD();}
 function closeKvModD(){document.getElementById('kv-mov').classList.remove('open');document.body.style.overflow='';}
 function saveKv(){
-  var row={kode:document.getElementById('kv-kode').value.trim().toUpperCase(),blok:document.getElementById('kv-blok').value.trim().toUpperCase(),luas:String(Number(document.getElementById('kv-luas').value)),harga:document.getElementById('kv-harga').value.trim(),status:document.getElementById('kv-st').value,fasilitas:document.getElementById('kv-fas').value.trim(),foto:document.getElementById('kv-foto').value.trim()};
+  var row={kode:document.getElementById('kv-kode').value.trim().toUpperCase(),blok:document.getElementById('kv-blok').value.trim().toUpperCase(),luas:String(Number(document.getElementById('kv-luas').value)),harga:document.getElementById('kv-harga').value.trim(),status:document.getElementById('kv-st').value,fasilitas:document.getElementById('kv-fas').value.trim(),foto:(document.getElementById('kv-foto').value||document.getElementById('kv-foto-url').value).trim()};
   if(!row.kode||!row.blok||!row.luas){toast('Kode, Blok, dan Luas wajib diisi!','err');return;}
   var idx=document.getElementById('kv-ei').value;
   var isEdit=idx!=='';
@@ -906,8 +1092,13 @@ function openJlMod(data,idx){
   document.getElementById('jl-jdl').value = data?data.judul:'';
   document.getElementById('jl-dsc').value = data?data.deskripsi:'';
   document.getElementById('jl-url').value = data?data.url:'';
+  var isVid=data&&data.url&&data.url.match(/\.(mp4|webm|ogg|mov)(\?|$)/i);
   var pv=document.getElementById('jl-pv');
-  if(data&&data.url){pv.src=data.url;pv.classList.add('show');}else{pv.classList.remove('show');pv.src='';}
+  var vd=document.getElementById('jl-vid');
+  if(data&&data.url&&!isVid){pv.src=data.url;pv.classList.add('show');vd.classList.remove('show');vd.src='';}
+  else if(data&&data.url&&isVid){vd.src=data.url;vd.classList.add('show');pv.classList.remove('show');pv.src='';}
+  else{pv.classList.remove('show');pv.src='';vd.classList.remove('show');vd.src='';}
+  document.getElementById('jl-file').value='';
   document.getElementById('jl-mov').classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -915,7 +1106,7 @@ function editJl(i){openJlMod(jlData[i],i);}
 function closeJlMod(e){if(e.target===document.getElementById('jl-mov'))closeJlModD();}
 function closeJlModD(){document.getElementById('jl-mov').classList.remove('open');document.body.style.overflow='';}
 function saveJl(){
-  var row={judul:document.getElementById('jl-jdl').value.trim(),deskripsi:document.getElementById('jl-dsc').value.trim(),url:document.getElementById('jl-url').value.trim()};
+  var row={judul:document.getElementById('jl-jdl').value.trim(),deskripsi:document.getElementById('jl-dsc').value.trim(),url:(document.getElementById('jl-url').value||document.getElementById('jl-url-inp').value).trim()};
   if(!row.judul||!row.url){toast('Judul dan URL wajib diisi!','err');return;}
   var idx=document.getElementById('jl-ei').value;
   var isEdit=idx!=='';
@@ -934,8 +1125,13 @@ function openBnMod(data,idx){
   document.getElementById('bn-dsc').value = data?data.deskripsi:'';
   document.getElementById('bn-url').value = data?data.url:'';
   document.getElementById('bn-ord').value = data?data.urutan:'';
-  var pv=document.getElementById('bn-pv');
-  if(data&&data.url){pv.src=data.url;pv.classList.add('show');}else{pv.classList.remove('show');pv.src='';}
+  var isVidBn=data&&data.url&&data.url.match(/\.(mp4|webm|ogg|mov)(\?|$)/i);
+  var pvBn=document.getElementById('bn-pv');
+  var vdBn=document.getElementById('bn-vid');
+  if(data&&data.url&&!isVidBn){pvBn.src=data.url;pvBn.classList.add('show');vdBn.classList.remove('show');vdBn.src='';}
+  else if(data&&data.url&&isVidBn){vdBn.src=data.url;vdBn.classList.add('show');pvBn.classList.remove('show');pvBn.src='';}
+  else{pvBn.classList.remove('show');pvBn.src='';vdBn.classList.remove('show');vdBn.src='';}
+  document.getElementById('bn-file').value='';
   document.getElementById('bn-mov').classList.add('open');
   document.body.style.overflow='hidden';
 }
@@ -943,7 +1139,7 @@ function editBn(i){openBnMod(bnData[i],i);}
 function closeBnMod(e){if(e.target===document.getElementById('bn-mov'))closeBnModD();}
 function closeBnModD(){document.getElementById('bn-mov').classList.remove('open');document.body.style.overflow='';}
 function saveBn(){
-  var row={judul:document.getElementById('bn-jdl').value.trim(),url:document.getElementById('bn-url').value.trim(),deskripsi:document.getElementById('bn-dsc').value.trim(),urutan:document.getElementById('bn-ord').value.trim()||'99'};
+  var row={judul:document.getElementById('bn-jdl').value.trim(),url:(document.getElementById('bn-url').value||document.getElementById('bn-url-inp').value).trim(),deskripsi:document.getElementById('bn-dsc').value.trim(),urutan:document.getElementById('bn-ord').value.trim()||'99'};
   if(!row.judul||!row.url){toast('Judul dan URL gambar wajib diisi!','err');return;}
   var idx=document.getElementById('bn-ei').value;
   var isEdit=idx!=='';
@@ -958,7 +1154,7 @@ function saveBn(){
 var pendDel=null;
 function confDel(type,idx){
   pendDel={type:type,idx:idx};
-  var lbl=type==='kv'?'Kavling '+(kvData[idx]&&kvData[idx].kode):type==='jl'?'Foto "'+(jlData[idx]&&jlData[idx].judul)+'"':'Banner "'+(bnData[idx]&&bnData[idx].judul)+'"';
+  var lbl=type==='kv'?'Kavling '+(kvData[idx]&&kvData[idx].kode):type==='jl'?'Foto "'+(jlData[idx]&&jlData[idx].judul)+'"':type==='vid'?'Video "'+(vidData[idx]&&vidData[idx].judul)+'"':'Banner "'+(bnData[idx]&&bnData[idx].judul)+'"';
   document.getElementById('conf-t').textContent='Hapus '+lbl+'?';
   document.getElementById('conf-ov').classList.add('open');
   document.getElementById('conf-ok').onclick=execDel;
@@ -972,20 +1168,24 @@ function execDel(){
   var removed;
   if(t==='kv'){ removed=kvData.splice(i,1)[0]; }
   else if(t==='jl'){ removed=jlData.splice(i,1)[0]; }
+  else if(t==='vid'){ removed=vidData.splice(i,1)[0]; }
   else { removed=bnData.splice(i,1)[0]; }
   saveData(buildFullData(),'Hapus data', function(ok){
     if(ok){
       if(t==='kv'){renderKvTb();renderDash();}
       else if(t==='jl'){renderJlTb();}
+      else if(t==='vid'){renderVidTb();}
       else{renderBnTb();}
       toast('Data dihapus ✅','ok');
     } else {
       // Kembalikan data jika gagal
       if(t==='kv') kvData.splice(i,0,removed);
       else if(t==='jl') jlData.splice(i,0,removed);
+      else if(t==='vid') vidData.splice(i,0,removed);
       else bnData.splice(i,0,removed);
       if(t==='kv') renderKvTb();
       else if(t==='jl') renderJlTb();
+      else if(t==='vid') renderVidTb();
       else renderBnTb();
     }
   });
@@ -1016,6 +1216,232 @@ function saveCreds(){
   document.getElementById('c-pw2').value='';
 }
 
+// ════════════════════════════════════════
+//  UPLOAD FILE KE GITHUB
+// ════════════════════════════════════════
+function switchTab(prefix, tab, btn){
+  // Toggle tab upload/url
+  var uploadDiv = document.getElementById(prefix+'-tab-upload');
+  var urlDiv    = document.getElementById(prefix+'-tab-url');
+  var btns      = btn.parentElement.querySelectorAll('.tab-btn');
+  btns.forEach(function(b){b.classList.remove('on');});
+  btn.classList.add('on');
+  if(tab==='upload'){
+    uploadDiv.style.display='';
+    urlDiv.style.display='none';
+  } else {
+    uploadDiv.style.display='none';
+    urlDiv.style.display='';
+  }
+}
+
+function handleUpload(fileInputId, hiddenId, imgId, vidId, folder){
+  var file = document.getElementById(fileInputId).files[0];
+  if(!file){ return; }
+
+  var maxMB = folder==='images' ? 5 : 25;
+  if(file.size > maxMB*1024*1024){
+    toast('❌ File terlalu besar! Maks '+maxMB+'MB','err'); return;
+  }
+
+  var prefix = fileInputId.split('-')[0]; // kv / jl / bn
+  var progWrap = document.getElementById(prefix+'-prog');
+  var progFill = document.getElementById(prefix+'-prog-fill');
+  var progTxt  = document.getElementById(prefix+'-prog-txt');
+
+  progWrap.classList.add('show');
+  progFill.style.width='10%';
+  progTxt.textContent='Membaca file...';
+
+  var reader = new FileReader();
+  reader.onload = function(e){
+    progFill.style.width='40%';
+    progTxt.textContent='Mengupload ke GitHub...';
+
+    // Buat nama file unik: timestamp + nama asli (sanitized)
+    var ext = file.name.split('.').pop().toLowerCase();
+    var safeName = Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+    var path = 'assets/'+folder+'/'+safeName;
+    var base64 = e.target.result.split(',')[1];
+
+    var body = JSON.stringify({
+      message: 'Upload '+file.name+' via Admin Panel',
+      content: base64
+    });
+
+    fetch('https://api.github.com/repos/'+GH_USER+'/'+GH_REPO+'/contents/'+path, {
+      method: 'PUT',
+      headers:{
+        'Authorization':'token '+GH_TOKEN,
+        'Accept':'application/vnd.github.v3+json',
+        'Content-Type':'application/json'
+      },
+      body: body
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      progFill.style.width='100%';
+      if(d.content && d.content.download_url){
+        var url = d.content.download_url;
+        document.getElementById(hiddenId).value = url;
+        progTxt.textContent='✅ Upload berhasil!';
+        setTimeout(function(){ progWrap.classList.remove('show'); progFill.style.width='0%'; },2000);
+        // Preview
+        if(file.type.startsWith('video/')){
+          if(vidId){
+            var vid=document.getElementById(vidId);
+            vid.src=url; vid.classList.add('show');
+          }
+          if(imgId) document.getElementById(imgId).classList.remove('show');
+        } else {
+          var img=document.getElementById(imgId);
+          img.src=url; img.classList.add('show');
+          if(vidId) document.getElementById(vidId).classList.remove('show');
+        }
+        toast('✅ File berhasil diupload!','ok');
+      } else {
+        progTxt.textContent='❌ Gagal upload';
+        toast('❌ Gagal upload: '+(d.message||'unknown'),'err');
+      }
+    })
+    .catch(function(e){
+      progTxt.textContent='❌ Error: '+e.message;
+      toast('❌ Error upload: '+e.message,'err');
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function prevMedia(inpId, imgId, vidId){
+  var url = document.getElementById(inpId).value.trim();
+  var isVideo = url.match(/\.(mp4|webm|ogg|mov)(\?|$)/i);
+  if(imgId){
+    var img=document.getElementById(imgId);
+    if(url&&!isVideo){img.src=url;img.classList.add('show');}else{img.classList.remove('show');img.src='';}
+  }
+  if(vidId){
+    var vid=document.getElementById(vidId);
+    if(url&&isVideo){vid.src=url;vid.classList.add('show');}else{vid.classList.remove('show');vid.src='';}
+  }
+}
+
+// ── VIDEO TABLE ──
+function renderVidTb(){
+  document.getElementById('vid-cnt').textContent = vidData.length;
+  document.getElementById('vid-tb').innerHTML = vidData.length?vidData.map(function(v,i){
+    return '<tr>'
+      +'<td>'+(v.url?'<video style="width:60px;height:42px;border-radius:6px;object-fit:cover;background:#000" src="'+v.url+'" muted></video>':'<div class="no-img">🎥</div>')+'</td>'
+      +'<td><strong>'+(v.judul||'—')+'</strong></td>'
+      +'<td style="color:var(--ts);font-size:.82rem">'+(v.deskripsi||'—')+'</td>'
+      +'<td><div style="display:flex;gap:.35rem">'
+        +'<button class="btn bs bsm" onclick="editVid('+i+')">✏️</button>'
+        +'<button class="btn bd bsm" onclick="confDel('vid','+i+')">🗑️</button>'
+      +'</div></td></tr>';
+  }).join('') : '<tr class="em-row"><td colspan="4">Belum ada video</td></tr>';
+}
+
+// ── VIDEO MODAL ──
+function openVidMod(data,idx){
+  document.getElementById('vid-mt').textContent = data?'Edit Video':'Tambah Video';
+  document.getElementById('vid-ei').value = idx!==undefined?idx:'';
+  document.getElementById('vid-jdl').value = data?data.judul:'';
+  document.getElementById('vid-dsc').value = data?data.deskripsi:'';
+  document.getElementById('vid-url').value = data?data.url:'';
+  document.getElementById('vid-url-inp').value = data?data.url:'';
+  document.getElementById('vid-fname').textContent = '';
+  var vp = document.getElementById('vid-vprev');
+  if(data&&data.url){vp.src=data.url;vp.classList.add('show');}else{vp.classList.remove('show');vp.src='';}
+  resetProg('vid');
+  document.getElementById('vid-mov').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function editVid(i){openVidMod(vidData[i],i);}
+function closeVidMod(e){if(e.target===document.getElementById('vid-mov'))closeVidModD();}
+function closeVidModD(){document.getElementById('vid-mov').classList.remove('open');document.body.style.overflow='';}
+function saveVid(){
+  var url = document.getElementById('vid-url').value.trim();
+  var row={judul:document.getElementById('vid-jdl').value.trim(),deskripsi:document.getElementById('vid-dsc').value.trim(),url:url};
+  if(!row.judul||!row.url){toast('Judul dan video wajib diisi!','err');return;}
+  var idx=document.getElementById('vid-ei').value;
+  var isEdit=idx!=='';
+  if(isEdit) vidData[Number(idx)]=row; else vidData.push(row);
+  saveData(buildFullData(),'Update video', function(ok){
+    if(ok){ closeVidModD(); renderVidTb(); toast('Video '+(isEdit?'diperbarui':'ditambahkan')+' ✅','ok'); }
+    else { if(isEdit) vidData[Number(idx)]=vidData[Number(idx)]; else vidData.pop(); }
+  });
+}
+
+// ── FILE UPLOAD HANDLERS ──
+function handleFileSelect(input, prefix){
+  var file = input.files[0];
+  if(!file) return;
+  var maxMB = prefix==='vid' ? 50 : 10;
+  if(file.size > maxMB*1024*1024){
+    toast('❌ File terlalu besar! Maks '+maxMB+'MB','err');
+    input.value=''; return;
+  }
+  document.getElementById(prefix+'-fname').textContent = '📎 '+file.name;
+  // Preview
+  if(prefix==='vid'){
+    var vp = document.getElementById('vid-vprev');
+    vp.src = URL.createObjectURL(file);
+    vp.classList.add('show');
+  } else {
+    var pv = document.getElementById(prefix+'-pv');
+    pv.src = URL.createObjectURL(file);
+    pv.classList.add('show');
+  }
+  // Upload
+  var folder = prefix==='vid'?'video':'images';
+  showProg(prefix, 0, 'Mempersiapkan upload...');
+  uploadFile(file, folder, function(pct){
+    showProg(prefix, pct, 'Mengupload... '+pct+'%');
+  }, function(err, url){
+    if(err){
+      resetProg(prefix);
+      toast('❌ Upload gagal: '+err,'err');
+    } else {
+      showProg(prefix, 100, '✅ Upload selesai!');
+      document.getElementById(prefix+'-url').value = url;
+      if(prefix==='vid') document.getElementById('vid-url-inp').value = url;
+      else document.getElementById(prefix+'-url-inp')||document.getElementById(prefix+'-foto-url')&&(document.getElementById(prefix+'-foto-url').value=url);
+      setTimeout(function(){resetProg(prefix);},2000);
+      toast('✅ File berhasil diupload!','ok');
+    }
+  });
+}
+
+function handleDrop(event, prefix){
+  event.preventDefault();
+  document.getElementById(prefix+'-upload-area').classList.remove('drag');
+  var file = event.dataTransfer.files[0];
+  if(!file) return;
+  var input = document.getElementById(prefix+'-file');
+  var dt = new DataTransfer();
+  dt.items.add(file);
+  input.files = dt.files;
+  handleFileSelect(input, prefix);
+}
+
+function showProg(prefix, pct, txt){
+  var pw = document.getElementById(prefix+'-prog');
+  pw.classList.add('show');
+  document.getElementById(prefix+'-pfill').style.width = pct+'%';
+  document.getElementById(prefix+'-ptxt').textContent = txt;
+}
+function resetProg(prefix){
+  var pw = document.getElementById(prefix+'-prog');
+  if(pw) pw.classList.remove('show');
+  var pf = document.getElementById(prefix+'-pfill');
+  if(pf) pf.style.width='0';
+}
+
+// URL input fallbacks
+function kv_urlInput(v){ document.getElementById('kv-foto').value=v; var pv=document.getElementById('kv-pv'); if(v){pv.src=v;pv.classList.add('show');}else{pv.classList.remove('show');} }
+function jl_urlInput(v){ document.getElementById('jl-url').value=v; var pv=document.getElementById('jl-pv'); if(v){pv.src=v;pv.classList.add('show');}else{pv.classList.remove('show');} }
+function bn_urlInput(v){ document.getElementById('bn-url').value=v; var pv=document.getElementById('bn-pv'); if(v){pv.src=v;pv.classList.add('show');}else{pv.classList.remove('show');} }
+function vid_urlInput(v){ document.getElementById('vid-url').value=v; var vp=document.getElementById('vid-vprev'); if(v){vp.src=v;vp.classList.add('show');}else{vp.classList.remove('show');} }
+
 // ── UI HELPERS ──
 function prevImg(inp,imgId){
   var url=document.getElementById(inp).value.trim();
@@ -1042,7 +1468,7 @@ function bar(active){
   if(active){b.className='go';}else{b.className='done';setTimeout(function(){b.className='';},400);}
 }
 document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){closeKvModD();closeJlModD();closeBnModD();closeConf();}
+  if(e.key==='Escape'){closeKvModD();closeJlModD();closeBnModD();closeVidModD();closeConf();}
 });
 </script>
 </body>
