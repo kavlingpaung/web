@@ -430,6 +430,20 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
           <input type="text" id="kv-harga-baru" placeholder="Kosongkan jika tidak ada perubahan harga">
         </div>
       </div>
+      <div class="frow s1">
+        <div class="fg">
+          <label>Label Badge <span style="color:var(--ts);font-size:.72rem;text-transform:none;letter-spacing:0;font-weight:400">(tampil jika ada Harga Baru)</span></label>
+          <select id="kv-badge-label">
+            <option value="">— Tidak tampilkan badge —</option>
+            <option value="hemat">💰 HEMAT (otomatis hitung selisih)</option>
+            <option value="diskon">🏷️ DISKON</option>
+            <option value="promo">🔥 PROMO!</option>
+            <option value="spesial">⭐ HARGA SPESIAL</option>
+            <option value="terbatas">⏳ PENAWARAN TERBATAS</option>
+          </select>
+          <span class="hint">Pilih label yang ingin ditampilkan di samping harga</span>
+        </div>
+      </div>
       <div class="frow">
         <div class="fg"><label>Status *</label>
           <select id="kv-st"><option value="tersedia">✅ Tersedia</option><option value="indent">⏳ Indent</option><option value="terjual">❌ Terjual</option></select>
@@ -1121,6 +1135,7 @@ function openKvMod(data,idx){
   document.getElementById('kv-st').value = data?data.status:'tersedia';
   document.getElementById('kv-fas').value = data?data.fasilitas:'';
   document.getElementById('kv-harga-baru').value = data?(data.harga_baru||''):'';
+  document.getElementById('kv-badge-label').value = data?(data.badge_label||''):'';
   document.getElementById('kv-foto').value = data?data.foto:'';
   document.getElementById('kv-foto-url').value = data?data.foto:'';
   resetProg('kv');
@@ -1136,7 +1151,7 @@ function editKv(i){openKvMod(kvData[i],i);}
 function closeKvMod(e){if(e.target===document.getElementById('kv-mov'))closeKvModD();}
 function closeKvModD(){document.getElementById('kv-mov').classList.remove('open');document.body.style.overflow='';}
 function saveKv(){
-  var row={kode:document.getElementById('kv-kode').value.trim().toUpperCase(),blok:document.getElementById('kv-blok').value.trim().toUpperCase(),luas:String(Number(document.getElementById('kv-luas').value)),harga:document.getElementById('kv-harga').value.trim(),harga_baru:document.getElementById('kv-harga-baru').value.trim(),status:document.getElementById('kv-st').value,fasilitas:document.getElementById('kv-fas').value.trim(),foto:(document.getElementById('kv-foto').value||document.getElementById('kv-foto-url').value).trim()};
+  var row={kode:document.getElementById('kv-kode').value.trim().toUpperCase(),blok:document.getElementById('kv-blok').value.trim().toUpperCase(),luas:String(Number(document.getElementById('kv-luas').value)),harga:document.getElementById('kv-harga').value.trim(),harga_baru:document.getElementById('kv-harga-baru').value.trim(),badge_label:document.getElementById('kv-badge-label').value,status:document.getElementById('kv-st').value,fasilitas:document.getElementById('kv-fas').value.trim(),foto:(document.getElementById('kv-foto').value||document.getElementById('kv-foto-url').value).trim()};
   if(!row.kode||!row.blok||!row.luas){toast('Kode, Blok, dan Luas wajib diisi!','err');return;}
   var idx=document.getElementById('kv-ei').value;
   var isEdit=idx!=='';
