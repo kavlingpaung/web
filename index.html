@@ -145,6 +145,9 @@ section{padding:88px 5%}
 .kv-meta{font-size:.82rem;color:var(--ink-m);margin-bottom:.8rem}
 .kv-harga{font-size:1.15rem;font-weight:700;color:var(--gold-d);margin-bottom:.7rem}
 .kv-harga.kosong{font-size:.88rem;font-weight:400;color:var(--ink-m)}
+.kv-harga-wrap{margin-bottom:.7rem;display:flex;flex-direction:column;gap:.2rem}
+.kv-harga-baru{font-size:1.35rem;font-weight:700;color:var(--gold-d);line-height:1.2}
+.kv-harga-lama{font-size:.88rem;font-weight:400;color:var(--ink-m);text-decoration:line-through}
 .kv-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.9rem}
 .kv-tag{padding:.18rem .55rem;border-radius:4px;background:var(--warm);color:var(--gold-d);font-size:.72rem;font-weight:500;border:1px solid var(--border)}
 .kv-foot{display:flex;gap:.55rem}
@@ -195,6 +198,8 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
 .m-row .lbl{color:var(--ink-m)}
 .m-row .val{font-weight:600}
 .m-row .val.price{color:var(--gold-d);font-size:1.05rem}
+.m-price-baru{color:var(--gold-d);font-size:1.2rem;font-weight:700}
+.m-price-lama{color:var(--ink-m);font-size:.85rem;text-decoration:line-through;margin-left:.4rem}
 .m-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin:.9rem 0}
 .m-wa{display:block;width:100%;margin-top:.9rem;background:#25D366;color:white;border:none;padding:.95rem;border-radius:10px;font-size:.95rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;transition:background .2s;font-family:'Outfit',sans-serif}
 .m-wa:hover{background:#1ebe57}
@@ -242,7 +247,7 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
   <div class="hero-wrap">
     <div class="h-left">
       <div class="h-eyebrow">🌿 Kavling Murah Untuk Investasi</div>
-      <h1 class="h-title"><span id="h-sitename">Kavling Paung</span><em id="h-tagline-em">Miliki tanah impian Anda</em></h1>
+      <h1 class="h-title"><span id="h-sitename">Kavling Prima Sejahtera</span><em id="h-tagline-em">Miliki tanah impian Anda</em></h1>
       <p class="h-desc" id="h-tagline">Miliki tanah impian di lokasi premium.</p>
       <div class="h-btns">
         <a class="btn-gold" href="#kavling">🏡 Lihat Kavling</a>
@@ -553,7 +558,8 @@ function renderKv(data){
   if(!data||!data.length){document.getElementById('kv-grid').innerHTML='<div class="empty"><div>🔍</div><p>Tidak ada kavling ditemukan.</p></div>';return;}
   document.getElementById('kv-grid').innerHTML=data.map(function(k){
     var h=fmtHarga(k.harga);
-    var waMsg='Halo, saya tertarik dengan Kavling '+k.kode+' (Blok '+k.blok+', '+k.luas+'m²)'+(h?' seharga '+h:'')+'. Mohon info lebih lanjut 🙏';
+    var hWa=fmtHarga(k.harga_baru)||h;
+    var waMsg='Halo, saya tertarik dengan Kavling '+k.kode+' (Blok '+k.blok+', '+k.luas+'m²)'+(hWa?' seharga '+hWa:'')+'. Mohon info lebih lanjut 🙏';
     var waUrl='https://wa.me/'+waNum+'?text='+encodeURIComponent(waMsg);
     var tags=k.fasilitas&&k.fasilitas.trim()?k.fasilitas.split(',').map(function(f){return'<span class="kv-tag">'+f.trim()+'</span>';}).join(''):'';
     return '<div class="kv-c '+(k.status||'')+'" onclick="showMod(\''+k.kode+'\')">'+
@@ -563,7 +569,16 @@ function renderKv(data){
       '<div class="kv-body">'+
         '<div class="kv-kode">Kavling '+k.kode+'</div>'+
         '<div class="kv-meta">📐 '+k.luas+' m²</div>'+
-        (h?'<div class="kv-harga">'+h+'</div>':'<div class="kv-harga kosong">Hubungi untuk harga</div>')+
+        (function(){
+          var hb = fmtHarga(k.harga_baru);
+          if(hb){
+            return '<div class="kv-harga-wrap"><div class="kv-harga-baru">'+hb+'</div>'+(h?'<div class="kv-harga-lama">'+h+'</div>':'')+'</div>';
+          } else if(h){
+            return '<div class="kv-harga">'+h+'</div>';
+          } else {
+            return '<div class="kv-harga kosong">Hubungi untuk harga</div>';
+          }
+        })()+
         (tags?'<div class="kv-tags">'+tags+'</div>':'')+
         '<div class="kv-foot">'+
           (k.status!=='terjual'?'<a class="btn-wa" href="'+waUrl+'" target="_blank" onclick="event.stopPropagation()">💬 Tanya WA</a>':'<span style="flex:1;text-align:center;padding:.6rem;color:var(--ink-m);font-size:.82rem">Sudah Terjual</span>')+
@@ -577,7 +592,8 @@ function renderKv(data){
 function showMod(kode){
   var k=kavData.find(function(x){return x.kode===kode;});if(!k)return;
   var h=fmtHarga(k.harga);
-  var waMsg='Halo, saya tertarik dengan Kavling '+k.kode+' (Blok '+k.blok+', '+k.luas+'m²)'+(h?' seharga '+h:'')+'. Mohon info lebih lanjut 🙏';
+  var hWaMod=fmtHarga(k.harga_baru)||h;
+  var waMsg='Halo, saya tertarik dengan Kavling '+k.kode+' (Blok '+k.blok+', '+k.luas+'m²)'+(hWaMod?' seharga '+hWaMod:'')+'. Mohon info lebih lanjut 🙏';
   var waUrl='https://wa.me/'+waNum+'?text='+encodeURIComponent(waMsg);
   document.getElementById('m-title').textContent='Kavling '+k.kode;
   var mi=document.getElementById('m-img');
@@ -590,7 +606,18 @@ function showMod(kode){
     '<div class="m-row"><span class="lbl">Kode</span><span class="val">'+k.kode+'</span></div>'+
     '<div class="m-row"><span class="lbl">Blok</span><span class="val">Blok '+k.blok+'</span></div>'+
     '<div class="m-row"><span class="lbl">Luas</span><span class="val">'+k.luas+' m²</span></div>'+
-    '<div class="m-row"><span class="lbl">Harga</span><span class="val price">'+(h||'<span style="color:var(--ink-m);font-weight:400;font-size:.88rem">Hubungi kami</span>')+'</span></div>'+
+    (function(){
+      var hb = fmtHarga(k.harga_baru);
+      var hargaHtml;
+      if(hb){
+        hargaHtml = '<span class="m-price-baru">'+hb+'</span>'+(h?'<span class="m-price-lama">'+h+'</span>':'');
+      } else if(h){
+        hargaHtml = '<span class="val price">'+h+'</span>';
+      } else {
+        hargaHtml = '<span style="color:var(--ink-m);font-weight:400;font-size:.88rem">Hubungi kami</span>';
+      }
+      return '<div class="m-row"><span class="lbl">Harga</span><span>'+hargaHtml+'</span></div>';
+    })()+
     '<div class="m-row"><span class="lbl">Status</span><span class="val"><span class="kv-badge b-'+(k.status==='tersedia'?'t':k.status==='terjual'?'j':'i')+'" style="position:static;display:inline-block">'+lblSt(k.status)+'</span></span></div>'+
     tags+
     (k.status!=='terjual'?'<a href="'+waUrl+'" target="_blank" class="m-wa">💬 Tanya via WhatsApp</a>':'<div style="text-align:center;padding:.9rem;color:var(--ink-m);border:1.5px solid var(--border);border-radius:9px;margin-top:.9rem">Kavling ini sudah terjual</div>');
