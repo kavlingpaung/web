@@ -419,9 +419,15 @@ td{padding:.75rem 1.1rem;font-size:.84rem;vertical-align:middle}
       <div class="frow">
         <div class="fg"><label>Luas (m²) *</label><input type="number" id="kv-luas" placeholder="120"></div>
         <div class="fg">
-          <label>Harga</label>
+          <label>Harga Lama</label>
           <input type="text" id="kv-harga" placeholder="180000000 atau Nego atau kosongkan">
           <span class="hint">Angka → tampil Rp | Teks → apa adanya | Kosong → "Hubungi untuk harga"</span>
+        </div>
+      </div>
+      <div class="frow s1">
+        <div class="fg">
+          <label>Harga Baru <span style="color:var(--acc);font-size:.72rem;text-transform:none;letter-spacing:0">(opsional — tampil lebih besar, harga lama dicoret)</span></label>
+          <input type="text" id="kv-harga-baru" placeholder="Kosongkan jika tidak ada perubahan harga">
         </div>
       </div>
       <div class="frow">
@@ -1048,7 +1054,12 @@ function renderKvTb(data){
     return '<tr>'
       +'<td>'+(k.foto?'<img class="thumb" src="'+k.foto+'" alt="" onerror="this.style.display=\'none\'">':'<div class="no-img">🏡</div>')+'</td>'
       +'<td><strong>'+k.kode+'</strong></td><td>Blok '+k.blok+'</td><td>'+k.luas+' m²</td>'
-      +'<td>'+rpFmt(k.harga)+'</td>'
+      +(function(){
+        if(k.harga_baru&&k.harga_baru.trim()){
+          return '<td><span style="font-weight:700;color:var(--grn)">'+rpFmt(k.harga_baru)+'</span> <span style="text-decoration:line-through;color:var(--tm);font-size:.78rem">'+rpFmt(k.harga)+'</span></td>';
+        }
+        return '<td>'+rpFmt(k.harga)+'</td>';
+      })()
       +'<td><span class="badge b'+stClass(k.status)+'">'+lblSt(k.status)+'</span></td>'
       +'<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.78rem;color:var(--ts)">'+(k.fasilitas||'—')+'</td>'
       +'<td><div style="display:flex;gap:.35rem">'
@@ -1109,6 +1120,7 @@ function openKvMod(data,idx){
   document.getElementById('kv-harga').value = data?data.harga:'';
   document.getElementById('kv-st').value = data?data.status:'tersedia';
   document.getElementById('kv-fas').value = data?data.fasilitas:'';
+  document.getElementById('kv-harga-baru').value = data?(data.harga_baru||''):'';
   document.getElementById('kv-foto').value = data?data.foto:'';
   document.getElementById('kv-foto-url').value = data?data.foto:'';
   resetProg('kv');
@@ -1124,7 +1136,7 @@ function editKv(i){openKvMod(kvData[i],i);}
 function closeKvMod(e){if(e.target===document.getElementById('kv-mov'))closeKvModD();}
 function closeKvModD(){document.getElementById('kv-mov').classList.remove('open');document.body.style.overflow='';}
 function saveKv(){
-  var row={kode:document.getElementById('kv-kode').value.trim().toUpperCase(),blok:document.getElementById('kv-blok').value.trim().toUpperCase(),luas:String(Number(document.getElementById('kv-luas').value)),harga:document.getElementById('kv-harga').value.trim(),status:document.getElementById('kv-st').value,fasilitas:document.getElementById('kv-fas').value.trim(),foto:(document.getElementById('kv-foto').value||document.getElementById('kv-foto-url').value).trim()};
+  var row={kode:document.getElementById('kv-kode').value.trim().toUpperCase(),blok:document.getElementById('kv-blok').value.trim().toUpperCase(),luas:String(Number(document.getElementById('kv-luas').value)),harga:document.getElementById('kv-harga').value.trim(),harga_baru:document.getElementById('kv-harga-baru').value.trim(),status:document.getElementById('kv-st').value,fasilitas:document.getElementById('kv-fas').value.trim(),foto:(document.getElementById('kv-foto').value||document.getElementById('kv-foto-url').value).trim()};
   if(!row.kode||!row.blok||!row.luas){toast('Kode, Blok, dan Luas wajib diisi!','err');return;}
   var idx=document.getElementById('kv-ei').value;
   var isEdit=idx!=='';
