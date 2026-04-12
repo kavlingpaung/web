@@ -145,7 +145,14 @@ section{padding:88px 5%}
 .kv-meta{font-size:.82rem;color:var(--ink-m);margin-bottom:.8rem}
 .kv-harga{font-size:1.15rem;font-weight:700;color:var(--gold-d);margin-bottom:.7rem}
 .kv-harga.kosong{font-size:.88rem;font-weight:400;color:var(--ink-m)}
-.kv-harga-wrap{margin-bottom:.7rem;display:flex;flex-direction:column;gap:.2rem}
+.kv-harga-wrap{margin-bottom:.7rem;display:flex;flex-direction:column;gap:.3rem}
+.kv-promo-badge{display:inline-flex;align-items:center;gap:.3rem;color:white;font-size:.72rem;font-weight:700;letter-spacing:.04em;padding:.22rem .65rem;border-radius:999px;width:fit-content;animation:promoPulse 2s ease-in-out infinite}
+.kv-promo-badge.b-hemat{background:linear-gradient(135deg,#27ae60,#1e8449);box-shadow:0 2px 8px rgba(39,174,96,.35)}
+.kv-promo-badge.b-diskon{background:linear-gradient(135deg,#e67e22,#ca6f1e);box-shadow:0 2px 8px rgba(230,126,34,.35)}
+.kv-promo-badge.b-promo{background:linear-gradient(135deg,#e74c3c,#c0392b);box-shadow:0 2px 8px rgba(231,76,60,.35)}
+.kv-promo-badge.b-spesial{background:linear-gradient(135deg,#8e44ad,#71368a);box-shadow:0 2px 8px rgba(142,68,173,.35)}
+.kv-promo-badge.b-terbatas{background:linear-gradient(135deg,#2980b9,#1a6fa8);box-shadow:0 2px 8px rgba(41,128,185,.35)}
+@keyframes promoPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.9;transform:scale(1.03)}}
 .kv-harga-baru{font-size:1.35rem;font-weight:700;color:var(--gold-d);line-height:1.2}
 .kv-harga-lama{font-size:.88rem;font-weight:400;color:var(--ink-m);text-decoration:line-through}
 .kv-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.9rem}
@@ -200,6 +207,12 @@ footer{background:#111410;color:rgba(250,246,238,.65);padding:3rem 5% 1.5rem}
 .m-row .val.price{color:var(--gold-d);font-size:1.05rem}
 .m-price-baru{color:var(--gold-d);font-size:1.2rem;font-weight:700}
 .m-price-lama{color:var(--ink-m);font-size:.85rem;text-decoration:line-through;margin-left:.4rem}
+.m-promo-badge{display:inline-flex;align-items:center;gap:.25rem;color:white;font-size:.72rem;font-weight:700;letter-spacing:.04em;padding:.2rem .6rem;border-radius:999px;margin-left:.5rem;vertical-align:middle}
+.m-promo-badge.b-hemat{background:linear-gradient(135deg,#27ae60,#1e8449);box-shadow:0 2px 8px rgba(39,174,96,.3)}
+.m-promo-badge.b-diskon{background:linear-gradient(135deg,#e67e22,#ca6f1e);box-shadow:0 2px 8px rgba(230,126,34,.3)}
+.m-promo-badge.b-promo{background:linear-gradient(135deg,#e74c3c,#c0392b);box-shadow:0 2px 8px rgba(231,76,60,.3)}
+.m-promo-badge.b-spesial{background:linear-gradient(135deg,#8e44ad,#71368a);box-shadow:0 2px 8px rgba(142,68,173,.3)}
+.m-promo-badge.b-terbatas{background:linear-gradient(135deg,#2980b9,#1a6fa8);box-shadow:0 2px 8px rgba(41,128,185,.3)}
 .m-tags{display:flex;flex-wrap:wrap;gap:.35rem;margin:.9rem 0}
 .m-wa{display:block;width:100%;margin-top:.9rem;background:#25D366;color:white;border:none;padding:.95rem;border-radius:10px;font-size:.95rem;font-weight:600;cursor:pointer;text-align:center;text-decoration:none;transition:background .2s;font-family:'Outfit',sans-serif}
 .m-wa:hover{background:#1ebe57}
@@ -572,7 +585,24 @@ function renderKv(data){
         (function(){
           var hb = fmtHarga(k.harga_baru);
           if(hb){
-            return '<div class="kv-harga-wrap"><div class="kv-harga-baru">'+hb+'</div>'+(h?'<div class="kv-harga-lama">'+h+'</div>':'')+'</div>';
+            var badgeHtml = '';
+          if(k.badge_label){
+            var bl = k.badge_label;
+            var blTxt = '';
+            if(bl==='hemat'){
+              var selisih='';
+              if(h&&!isNaN(Number(k.harga))&&!isNaN(Number(k.harga_baru))&&Number(k.harga)>0&&Number(k.harga_baru)>0){
+                var s=Number(k.harga)-Number(k.harga_baru);
+                if(s>0) selisih=' Rp '+s.toLocaleString('id-ID');
+              }
+              blTxt='💰 HEMAT'+selisih;
+            } else if(bl==='diskon'){ blTxt='🏷️ DISKON';
+            } else if(bl==='promo'){ blTxt='🔥 PROMO!';
+            } else if(bl==='spesial'){ blTxt='⭐ HARGA SPESIAL';
+            } else if(bl==='terbatas'){ blTxt='⏳ PENAWARAN TERBATAS';}
+            if(blTxt) badgeHtml='<div class="kv-promo-badge b-'+bl+'">'+blTxt+'</div>';
+          }
+          return '<div class="kv-harga-wrap">'+badgeHtml+'<div class="kv-harga-baru">'+hb+'</div>'+(h?'<div class="kv-harga-lama">'+h+'</div>':'')+'</div>';
           } else if(h){
             return '<div class="kv-harga">'+h+'</div>';
           } else {
@@ -610,7 +640,24 @@ function showMod(kode){
       var hb = fmtHarga(k.harga_baru);
       var hargaHtml;
       if(hb){
-        hargaHtml = '<span class="m-price-baru">'+hb+'</span>'+(h?'<span class="m-price-lama">'+h+'</span>':'');
+        var badgeModHtml = '';
+        if(k.badge_label){
+          var blm = k.badge_label;
+          var blmTxt = '';
+          if(blm==='hemat'){
+            var selisihMod='';
+            if(h&&!isNaN(Number(k.harga))&&!isNaN(Number(k.harga_baru))&&Number(k.harga)>0&&Number(k.harga_baru)>0){
+              var sm=Number(k.harga)-Number(k.harga_baru);
+              if(sm>0) selisihMod=' Rp '+sm.toLocaleString('id-ID');
+            }
+            blmTxt='💰 HEMAT'+selisihMod;
+          } else if(blm==='diskon'){ blmTxt='🏷️ DISKON';
+          } else if(blm==='promo'){ blmTxt='🔥 PROMO!';
+          } else if(blm==='spesial'){ blmTxt='⭐ HARGA SPESIAL';
+          } else if(blm==='terbatas'){ blmTxt='⏳ PENAWARAN TERBATAS';}
+          if(blmTxt) badgeModHtml='<span class="m-promo-badge b-'+blm+'">'+blmTxt+'</span>';
+        }
+        hargaHtml = '<span class="m-price-baru">'+hb+'</span>'+(h?'<span class="m-price-lama">'+h+'</span>':'')+badgeModHtml;
       } else if(h){
         hargaHtml = '<span class="val price">'+h+'</span>';
       } else {
