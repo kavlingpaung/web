@@ -1320,7 +1320,7 @@ function handleUpload(fileInputId, hiddenId, imgId, vidId, folder){
   var file = document.getElementById(fileInputId).files[0];
   if(!file){ return; }
 
-  var maxMB = folder==='images' ? 5 : 25;
+  var maxMB = folder==='images' ? 5 : 100;
   if(file.size > maxMB*1024*1024){
     toast('❌ File terlalu besar! Maks '+maxMB+'MB','err'); return;
   }
